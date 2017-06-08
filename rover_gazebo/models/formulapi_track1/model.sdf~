@@ -1,0 +1,24 @@
+<?xml version="1.0" ?>
+<sdf version="1.0">
+  <model name="formulapi_track1">
+    <link name="link">
+      <inertial>
+        <mass>10</mass>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>10.5 6.7 0.0</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://formulapi_track1/meshes/formulapi_track_1.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+</sdf>

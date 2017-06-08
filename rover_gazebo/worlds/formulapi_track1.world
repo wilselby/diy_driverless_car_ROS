@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.4">
+  <world name="default">
+    <include>
+      <uri>model://sun</uri>
+    </include>
+  <model name="formulapi_track1">
+      <pose>0 0 0 0 0 0</pose> <!-- Helps to bring track off ground plane for visualizations -->
+      <static>true</static>
+    <link name="link">
+      <inertial>
+        <mass>1000</mass>
+      </inertial>
+      <collision name="collision">
+        <geometry>
+          <mesh>
+            <uri>model://formulapi_track1/meshes/formulapi_track_1.dae</uri>
+          </mesh>
+        </geometry>
+      </collision>
+      <visual name="visual">
+        <geometry>
+          <mesh>
+            <uri>model://formulapi_track1/meshes/formulapi_track_1.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  </model>
+  </world>
+</sdf>
+
+
+
