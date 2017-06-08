@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+Software License Agreement (BSD)
+
+\file      rover_center_line_cam.launch
+\authors   Wil Selby <accounts@wilselby.com>
+\copyright Copyright (c) 2017, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * The name of the contributors may not be used to endorse or promote products derived from this software 
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+<launch>
+
+  <arg name="display_cam" default="true" />
+  <arg name="record_cam" default="false" />
+
+  <!-- Load Joystick node  -->
+  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
+
+  <!-- Load Rover Control information -->
+  <include file="$(find rover_control)/launch/rover_control.launch"/> 
+
+  <!-- Load the Arduino node -->
+  <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/ttyACM0" /> 
+
+  <!-- Spawn Camera Driver node --> 
+  <include file="$(find raspicam_node)/launch/camerav2_320x240.launch"/>
+
+  <!-- Run Lane Detection Node -->
+  <node name="center_line_detection" pkg="lane_detection" type="center_line_detection.py" output="screen" />
+
+  <!-- Spawn Image Transport node -->
+  <node name="republish" pkg="image_transport" type="republish" output="screen"
+    args="compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw"
+    if="$(arg display_cam)" />
+
+  <!-- Spawn Image Viewer node -->
+  <node name="image_view" pkg="image_view" type="image_view" 
+    if="$(arg display_cam)" />
+    <remap from="image" to="/image_converter/output_video" />
+
+  <!-- Record data  -->
+  <node pkg="rosbag" type="record" name="rosbag_record_all"
+    args="-a -o $(find rover_teleop)/data/rover"
+    if="$(arg record_cam)" />   
+  
+
+</launch>

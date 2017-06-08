@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+
+  <rosparam command="load" file="$(find yetiborg_control)/config/control.yaml" />
+
+  <node name="base_controller_spawner" pkg="controller_manager" type="spawner" args="yetiborg_joint_publisher yetiborg_velocity_controller --shutdown-timeout 3"/>
+
+<!-- EKF node -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam command="load" file="$(find yetiborg_control)/config/localization.yaml" />
+  </node>
+
+  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="manager" />
+  <include file="$(find yocs_cmd_vel_mux)/launch/cmd_vel_mux.launch">
+    <arg name="nodelet_manager_name" value="cmd_vel_mux" />
+    <arg name="config_file" value="$(find yetiborg_control)/config/cmd_vel_mux.yaml" />
+  </include>
+
+
+</launch>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+  <name>rover_description</name>
+  <version>0.0.0</version>
+  <description>Simulation Package for a DIY Driverless Vehicle based on the ClearPath Robotics Husky Vehicle</description>
+
+  <license>BSD</license>
+
+  <maintainer email="wil@wilselby.com">Wil Selby</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <run_depend>urdf</run_depend>
+  <run_depend>xacro</run_depend>
+
+  <export>
+  </export>
+</package>
