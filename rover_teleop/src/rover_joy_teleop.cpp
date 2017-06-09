@@ -46,7 +46,7 @@ TeleopJoy::TeleopJoy()
   n.param("axis_angular", i_velAngular, i_velAngular);
   sub = n.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopJoy::callBack, this);
 
-  while true
+  while(true)
   {
     pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
     pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
