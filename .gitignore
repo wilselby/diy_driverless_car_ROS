@@ -1,7 +1,12 @@
 /rover_ml/data/*
+!/rover_ml/data/.keep
 /rover_ml/output/*
+!/rover_ml/output/.keep
 /rover_ml/behavior_cloning/weights
+!/rover_ml/behavior_cloning/weights
 /rover_ml/behavior_cloning/src/behavior_cloning/*.h5
 /rover_teleop/data/*
+!/rover_teleop/data/.keep
 /rover_cv/lane_detection/*.bag
 *.bag
+*~
