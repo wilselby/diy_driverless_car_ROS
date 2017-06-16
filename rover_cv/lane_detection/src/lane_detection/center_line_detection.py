@@ -42,6 +42,9 @@ class lane_detection(object):
       self.processedImage = None
       self.imgRcvd = False
       
+      self.boundaries = [([0, 0, 24], [255, 255, 255])] #for Gazebo Conde track
+      #self.boundaries = [([16, 61, 98], [25, 169, 169])] #for LocalMotors track
+      
       self.global_fit = None
       
       self.intersectionPoint = (0,  0)  
@@ -72,8 +75,8 @@ class lane_detection(object):
      
      while True:
          # Only run loop if we have an image
-         if self.imgRcvd:
-             
+         if self.imgRcvd:             
+
              # step 1: undistort image
              
              #Define region of interest for cropping
@@ -94,7 +97,7 @@ class lane_detection(object):
              
              # step 3: detect binary lane markings
              #self.binaryImage,  self.channelImage = ld.HLS_sobel(self.warpedImage)
-             _,self.binaryImage = cv2.threshold(self.warpedImage,127,255,cv2.THRESH_BINARY)
+             self.binaryImage = ld.binary_thresh(self.warpedImage,  self.boundaries,  'HSV')     #RGB or HSV
              
              # step 4: fit polynomials
              if self.global_fit is not None:

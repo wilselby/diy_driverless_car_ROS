@@ -97,6 +97,25 @@ def canny(img, low_threshold, high_threshold):
     """Applies the Canny transform"""
     return cv2.Canny(img, low_threshold, high_threshold)    
     
+def binary_thresh( img,  boundaries,  filter):
+    
+     if filter == 'RGB':
+         frame_to_thresh = img.copy()
+     else:
+         frame_to_thresh = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    
+     for (lower,  upper) in boundaries:
+     
+         # create numpy arrays from the boundaries
+         lower = np.array(lower,  dtype = "uint8")
+         upper = np.array(upper,  dtype = "uint8")
+         
+         # find the colors within the specified boundaries and apply the mask
+         mask = cv2.inRange(frame_to_thresh,  lower,  upper)
+         output = cv2.bitwise_and(frame_to_thresh, frame_to_thresh,  mask = mask)   #Returns an RGB image
+     
+     return mask
+    
 def HLS_sobel(img, s_thresh=(120, 255), sx_thresh=(20, 255),l_thresh=(40,255)):
     img = np.copy(img)
     
