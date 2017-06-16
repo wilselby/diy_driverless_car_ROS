@@ -10,3 +10,4 @@
 /rover_cv/lane_detection/*.bag
 *.bag
 *~
+*.pyc

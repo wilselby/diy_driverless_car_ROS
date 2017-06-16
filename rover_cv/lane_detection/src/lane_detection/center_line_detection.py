@@ -42,8 +42,8 @@ class lane_detection(object):
       self.processedImage = None
       self.imgRcvd = False
       
-      self.boundaries = [([0, 0, 24], [255, 255, 255])] #for Gazebo Conde track
-      #self.boundaries = [([16, 61, 98], [25, 169, 169])] #for LocalMotors track
+      #self.boundaries = [([0, 0, 24], [255, 255, 255])] #for Gazebo Conde track
+      self.boundaries = [([16, 61, 98], [25, 169, 169])] #for LocalMotors track
       
       self.global_fit = None
       
