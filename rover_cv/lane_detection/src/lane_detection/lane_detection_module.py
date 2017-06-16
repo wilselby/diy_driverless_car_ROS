@@ -61,13 +61,11 @@ def drawQuad(image, points, color=[255, 0, 0], thickness=4):
         cv2.line(image, tuple(p3), tuple(p4), color, thickness)
         cv2.line(image, tuple(p4), tuple(p1), color, thickness)
      
-def perspective_transform(image, debug=False, xoffset=150):
+def perspective_transform(image, corners, debug=False, xoffset=150):
     
      height, width = image.shape[0:2]
      output_size = height/2
      
-     # Hardcoded in for the ROS Gazebo Simulation
-     corners = np.float32([[44,560], [378,450],[902,450],[1215,560]])
      new_top_left=np.array([corners[0,0],0])
      new_top_right=np.array([corners[3,0],0])
      offset=[xoffset,0]    
@@ -162,12 +160,11 @@ def fit_polynomials(image, binary_warped, debug=False):
     global ploty
     global fitx
     global fit
-        
+            
     if isinstance( binary_warped, int ) or binary_warped.shape[0] == 3:
-         print(binary_warped)
          ploty = np.zeros(shape=(1, 1))
          fitx = np.zeros(shape=(1, 1))
-         fit = np.zeros(shape=(1, 1))
+         fit = None
          return ploty, fitx, fit
     
     # Assuming you have created a warped binary image called "binary_warped"
@@ -241,6 +238,10 @@ def fit_polynomials(image, binary_warped, debug=False):
         # Generate x and y values for plotting
         ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
         fitx = fit[0]*ploty**2 + fit[1]*ploty + fit[2]
+    else:
+		ploty = np.zeros(shape=(1, 1))
+		fitx = np.zeros(shape=(1, 1))
+		fit = None
 
     if debug:
         out_img[nonzeroy[lane_inds], nonzerox[lane_inds]] = [255, 0, 0]
@@ -277,9 +278,9 @@ def fast_fit_polynomials(binary_warped, fit):
     
     return ploty, fitx, fit
     
-def render_lane(image, ploty, fitx, ):
+def render_lane(image, corners, ploty, fitx, ):
 
-    _,  src,  dst = perspective_transform(image)
+    _,  src,  dst = perspective_transform(image, corners)
     Minv = cv2.getPerspectiveTransform(dst, src)
 
     # Create an image to draw the lines on

@@ -42,8 +42,14 @@ class lane_detection(object):
       self.processedImage = None
       self.imgRcvd = False
       
-      #self.boundaries = [([0, 0, 24], [255, 255, 255])] #for Gazebo Conde track
-      self.boundaries = [([16, 61, 98], [25, 169, 169])] #for LocalMotors track
+      # Gazebo Variables
+      #self.corners = np.float32([[44,560], [378,450],[902,450],[1215,560]]) #Gazebo Conde track
+      #self.boundaries = [([0, 0, 24], [255, 255, 255])] #Gazebo Conde track
+      
+      # Raspicam Variables
+      self.corners = np.float32([[106,238], [138,187],[217,187],[238,238]])
+      self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track
+      
       
       self.global_fit = None
       
@@ -83,17 +89,27 @@ class lane_detection(object):
              height = self.latestImage.shape[0]
              width = self.latestImage.shape[1]
              
-             vertices = np.array( [[
+             """ Gazebo Conde 
+             self.vertices = np.array( [[
+                        [2.75*width/5, 3*height/5],
+                        [2.25*width/5, 3*height/5],
+                        [.5*width/5, height], 
+                        [4.5*width/5, height]
+                    ]], dtype=np.int32 )
+             """
+             
+             """ Raspicam """
+             self.vertices = np.array( [[
                         [2.75*width/5, 3*height/5],
                         [2.25*width/5, 3*height/5],
                         [.5*width/5, height], 
                         [4.5*width/5, height]
                     ]], dtype=np.int32 )
             
-             self.maskedImage = ld.region_of_interest(self.latestImage, vertices)
+             self.maskedImage = ld.region_of_interest(self.latestImage, self.vertices)
              
              # step 2: perspective transform
-             self.warpedImage,  _,  _ = ld.perspective_transform(self.maskedImage)
+             self.warpedImage,  _,  _ = ld.perspective_transform(self.maskedImage, self.corners)
              
              # step 3: detect binary lane markings
              #self.binaryImage,  self.channelImage = ld.HLS_sobel(self.warpedImage)
@@ -108,7 +124,7 @@ class lane_detection(object):
              self.global_fit = fit
              
              # step 5: draw lane
-             self.processedImage = ld.render_lane(self.latestImage, ploty, fitx) 
+             self.processedImage = ld.render_lane(self.latestImage, self.corners, ploty, fitx) 
              
              # step 6: print curvature
              #self.curv = get_curvature(ploty, fitx)

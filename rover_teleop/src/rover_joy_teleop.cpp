@@ -44,12 +44,13 @@ TeleopJoy::TeleopJoy()
   i_velAngular = 0;
   n.param("axis_linear", i_velLinear, i_velLinear);
   n.param("axis_angular", i_velAngular, i_velAngular);
-  sub = n.subscribe<sensor_msgs::Joy>("joy", 10, &TeleopJoy::callBack, this);
-
+  sub = n.subscribe<sensor_msgs::Joy>("/joy_teleop/joy", 10, &TeleopJoy::callBack, this);
+  pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
+  pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
+  
   while(true)
   {
-    pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
-    pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
+
   }
 
 }
@@ -76,7 +77,7 @@ void TeleopJoy::callBack(const sensor_msgs::Joy::ConstPtr& joy)
 
 int main(int argc, char** argv) {
 
-  ros::init(argc, argv, "rover_joy_interface");	//Specify node name
+  ros::init(argc, argv, "rover_joy_teleop");	//Specify node name
   TeleopJoy teleopjoy;
 
   ros::spin();
