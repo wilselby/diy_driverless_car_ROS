@@ -275,6 +275,10 @@ def fast_fit_polynomials(binary_warped, fit):
         # Generate x and y values for plotting
         ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
         fitx = fit[0]*ploty**2 + fit[1]*ploty + fit[2]
+    else:
+		ploty = np.zeros(shape=(1, 1))
+		fitx = np.zeros(shape=(1, 1))
+		fit = None
     
     return ploty, fitx, fit
     
