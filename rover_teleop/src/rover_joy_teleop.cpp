@@ -23,41 +23,16 @@ using namespace std;
 float max_linear_vel = 0.2;
 float max_angular_vel = 1.5707;
 
-class TeleopJoy{
-  public:
-    TeleopJoy();
 
-  private:
-    void callBack(const sensor_msgs::Joy::ConstPtr& joy);
-    ros::NodeHandle n;
-    ros::Publisher pub;
-    ros::Publisher pubStamped;
-    ros::Subscriber sub;
-    int i_velLinear;
-    int i_velAngular;
-};
+ros::Publisher pub;
+ros::Publisher pubStamped;
+ros::Subscriber sub;
+int i_velLinear;
+int i_velAngular;
 
-TeleopJoy::TeleopJoy()
+void callBack(const sensor_msgs::JoyConstPtr& joy)
 {
-
-  i_velLinear = 1;
-  i_velAngular = 0;
-  n.param("axis_linear", i_velLinear, i_velLinear);
-  n.param("axis_angular", i_velAngular, i_velAngular);
-  sub = n.subscribe<sensor_msgs::Joy>("/joy_teleop/joy", 10, &TeleopJoy::callBack, this);
-  pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
-  pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
-  
-  while(true)
-  {
-
-  }
-
-}
-
-
-void TeleopJoy::callBack(const sensor_msgs::Joy::ConstPtr& joy)
-{
+	  
   geometry_msgs::Twist vel;
   vel.angular.z = max_angular_vel*joy->axes[0];
   vel.linear.x = max_linear_vel*joy->axes[1];
@@ -74,13 +49,26 @@ void TeleopJoy::callBack(const sensor_msgs::Joy::ConstPtr& joy)
 
 }
 
-
 int main(int argc, char** argv) {
 
   ros::init(argc, argv, "rover_joy_teleop");	//Specify node name
-  TeleopJoy teleopjoy;
+  
+  ros::NodeHandle n;
+  
+  i_velLinear = 1;
+  i_velAngular = 0;
+  n.param("axis_linear", i_velLinear, i_velLinear);
+  n.param("axis_angular", i_velAngular, i_velAngular);
+  sub = n.subscribe("joy", 10, callBack);
+  pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
+  pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
 
   ros::spin();
 
   return 0;
 }
+
+
+
+
+
