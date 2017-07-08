@@ -48,8 +48,8 @@ class lane_detection(object):
       
       # Raspicam Variables
       self.corners = np.float32([[106,238], [138,187],[217,187],[238,238]])
-      self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track
-      
+      #self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track (HSV - yellow)
+      self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 33
       
       self.global_fit = None
       
@@ -99,11 +99,19 @@ class lane_detection(object):
              """
              
              """ Raspicam """
+             """"original
              self.vertices = np.array( [[
                         [2.75*width/5, 3*height/5],
                         [2.25*width/5, 3*height/5],
                         [.5*width/5, height], 
                         [4.5*width/5, height]
+                    ]], dtype=np.int32 )
+             """
+             self.vertices = np.array( [[
+                        [3.75*width/5, 1.5*height/5],
+                        [1.25*width/5, 1.5*height/5],
+                        [.05*width/5, height], 
+                        [4.95*width/5, height]
                     ]], dtype=np.int32 )
             
              self.maskedImage = ld.region_of_interest(self.latestImage, self.vertices)
@@ -136,7 +144,7 @@ class lane_detection(object):
              self.flag = control.adjustMotorSpeed(self.latestImage,  self.intersectionPoint,  self.speed,  self.cmdVelocityPub, self.cmdVelocityStampedPub, self.flag)
              
              # Publish Processed Image
-             self.outputImage = self.processedImage
+             self.outputImage = self.processedImage #self.processedImage
              self.publish(self.outputImage, self.bridge,  self.image_pub)
 
 

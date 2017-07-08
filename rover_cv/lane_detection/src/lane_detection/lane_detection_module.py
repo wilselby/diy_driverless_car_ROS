@@ -47,7 +47,7 @@ def seg_intersect(a1,a2, b1,b2):
      num = np.dot( dap, dp )
      return (num / denom.astype(float))*db + b1
 
-def movingAverage(avg, new_sample, N=15):
+def movingAverage(avg, new_sample, N=30):
      if (avg == 0):
          return new_sample
      avg -= avg / N;
@@ -226,7 +226,7 @@ def fit_polynomials(image, binary_warped, debug=False):
     # Concatenate the arrays of indices
     lane_inds = np.concatenate(lane_inds)
 
-    # Extract left and right line pixel positions
+    # Extract line pixel positions
     x = nonzerox[lane_inds]
     y = nonzeroy[lane_inds] 
 

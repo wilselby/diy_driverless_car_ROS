@@ -8,6 +8,9 @@
 /rover_teleop/data/*
 !/rover_teleop/data/.keep
 /rover_cv/lane_detection/*.bag
+/rover_cv/utility/*
+!/rover_cv/utility/.keep
 *.bag
 *~
 *.pyc
+
