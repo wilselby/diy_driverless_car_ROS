@@ -39,6 +39,7 @@ class lane_detection(object):
       self.maskedImage = None
       self.binaryImage = None
       self.channelImage = None
+      self.maskedRGBImage = None
       self.processedImage = None
       self.imgRcvd = False
       
@@ -47,15 +48,17 @@ class lane_detection(object):
       #self.boundaries = [([0, 0, 24], [255, 255, 255])] #Gazebo Conde track
       
       # Raspicam Variables
-      self.corners = np.float32([[106,238], [138,187],[217,187],[238,238]])
+      #self.corners = np.float32([[15,238], [138,187],[217,187],[238,238]]) #Checkerboard
+      self.corners = np.float32([[15,238], [101,140],[189,140],[297,238]]) #Kitchen
       #self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track (HSV - yellow)
-      self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 33
+      self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 
       
       self.global_fit = None
       
       self.intersectionPoint = (0,  0)  
       self.speed = 0.2
       self.flag = 0
+      self.avg = 0
 
     def cvt_image(self,data):  
       try:
@@ -108,8 +111,8 @@ class lane_detection(object):
                     ]], dtype=np.int32 )
              """
              self.vertices = np.array( [[
-                        [3.75*width/5, 1.5*height/5],
-                        [1.25*width/5, 1.5*height/5],
+                        [3.75*width/5, 2*height/5],
+                        [1.25*width/5, 2*height/5],
                         [.05*width/5, height], 
                         [4.95*width/5, height]
                     ]], dtype=np.int32 )
@@ -131,20 +134,48 @@ class lane_detection(object):
              
              self.global_fit = fit
              
-             # step 5: draw lane
-             self.processedImage = ld.render_lane(self.latestImage, self.corners, ploty, fitx) 
-             
-             # step 6: print curvature
-             #self.curv = get_curvature(ploty, fitx)
+             if self.binaryImage is not None:
 
-             # step 6: Adjust Motors
-             self.intersectionPoint = np.array([fitx[0]])
-             avg = ld.movingAverage(self.intersectionPoint, fitx[0],  20)
-             self.intersectionPoint = np.array([avg])
-             self.flag = control.adjustMotorSpeed(self.latestImage,  self.intersectionPoint,  self.speed,  self.cmdVelocityPub, self.cmdVelocityStampedPub, self.flag)
+                 data = cv2.cvtColor(self.binaryImage, cv2.COLOR_GRAY2BGR)
+                 
+                 r1, g1, b1 = 255, 255, 255 # Original value
+                 r2, g2, b2 = 255, 0, 0 # Value that we want to replace it with
+
+                 red, green, blue = data[:,:,0], data[:,:,1], data[:,:,2]
+                 mask = (red == r1) & (green == g1) & (blue == b1)
+                 data[:,:,:3][mask] = [b2, g2, r2]
+                 
+                 output = cv2.bitwise_and(self.warpedImage, self.warpedImage,  mask = self.binaryImage)   #Returns an RGB image                 
+
+                 _,  src,  dst = ld.perspective_transform(self.latestImage, self.corners)
+                 Minv = cv2.getPerspectiveTransform(dst, src)
+                 
+                 newwarp = cv2.warpPerspective(data, Minv, (self.latestImage.shape[1], self.latestImage.shape[0]))
+                 
+                 self.maskedRGBImage = cv2.addWeighted(newwarp, 1, self.latestImage, 2.0, 0)                 
              
+             if fitx.shape[0] >1:
+                 
+                 # step 5: draw lane             
+                 self.processedImage = ld.render_lane(self.maskedRGBImage, self.corners, ploty, fitx) 
+
+                 # step 6: print curvature
+                 #self.curv = get_curvature(ploty, fitx)     
+
+                 # step 6: Calculate Setpoint
+                 pts = np.vstack((fitx,ploty)).astype(np.float64).T
+                 self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=20)
+                 self.intersectionPoint = np.array([self.avg])
+                 
+                 # Draw the Setpoint onto the warped blank image
+                 radius = 5
+                 cv2.circle(self.processedImage,(self.intersectionPoint, (self.processedImage.shape[0]-radius)), radius, (255,255,0), -1)
+                 
+                 # step 6: Adjust Motors
+                 self.flag = control.adjustMotorSpeed(self.latestImage,  self.intersectionPoint,  self.speed,  self.cmdVelocityPub, self.cmdVelocityStampedPub, self.flag)
+                 
              # Publish Processed Image
-             self.outputImage = self.processedImage #self.processedImage
+             self.outputImage = self.processedImage
              self.publish(self.outputImage, self.bridge,  self.image_pub)
 
 

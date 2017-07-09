@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # https://github.com/paramaggarwal/CarND-LaneLines-P1/blob/master/P1.ipynb
+#https://github.com/NikolasEnt/Advanced-Lane-Lines/blob/master/LaneLine.ipynb
+
 from __future__ import print_function
 from __future__ import division
 import roslib
@@ -47,7 +49,7 @@ def seg_intersect(a1,a2, b1,b2):
      num = np.dot( dap, dp )
      return (num / denom.astype(float))*db + b1
 
-def movingAverage(avg, new_sample, N=30):
+def movingAverage(avg, new_sample, N=15):
      if (avg == 0):
          return new_sample
      avg -= avg / N;
@@ -61,7 +63,7 @@ def drawQuad(image, points, color=[255, 0, 0], thickness=4):
         cv2.line(image, tuple(p3), tuple(p4), color, thickness)
         cv2.line(image, tuple(p4), tuple(p1), color, thickness)
      
-def perspective_transform(image, corners, debug=False, xoffset=150):
+def perspective_transform(image, corners, debug=False, xoffset=0):
     
      height, width = image.shape[0:2]
      output_size = height/2
@@ -232,12 +234,21 @@ def fit_polynomials(image, binary_warped, debug=False):
 
     if x.shape[0] !=0 and y.shape[0] !=0:
 
+        """
         # Fit a second order polynomial to each
         fit = np.polyfit(y, x, 2)
 
         # Generate x and y values for plotting
         ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
         fitx = fit[0]*ploty**2 + fit[1]*ploty + fit[2]
+        """
+        # Fit a first order polynomial to each
+        fit = np.polyfit(y, x, 1)
+
+        # Generate x and y values for plotting
+        ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
+        fitx = fit[0]*ploty + fit[1]
+        
     else:
 		ploty = np.zeros(shape=(1, 1))
 		fitx = np.zeros(shape=(1, 1))
@@ -261,7 +272,8 @@ def fast_fit_polynomials(binary_warped, fit):
     nonzeroy = np.array(nonzero[0])
     nonzerox = np.array(nonzero[1])
     margin = 100
-    lane_inds = ((nonzerox > (fit[0]*(nonzeroy**2) + fit[1]*nonzeroy + fit[2] - margin)) & (nonzerox < (fit[0]*(nonzeroy**2) + fit[1]*nonzeroy + fit[2] + margin))) 
+    #lane_inds = ((nonzerox > (fit[0]*(nonzeroy**2) + fit[1]*nonzeroy + fit[2] - margin)) & (nonzerox < (fit[0]*(nonzeroy**2) + fit[1]*nonzeroy + fit[2] + margin))) 
+    lane_inds = ((nonzerox > (fit[0]*nonzeroy + fit[1] - margin)) & (nonzerox < fit[0]*nonzeroy + fit[1] + margin))
   
     # Again, extract  line pixel positions
     x = nonzerox[lane_inds]
@@ -269,12 +281,21 @@ def fast_fit_polynomials(binary_warped, fit):
     
     if x.shape[0] !=0 and y.shape[0] !=0:
 
+        """
         # Fit a second order polynomial
         fit = np.polyfit(y, x, 2)
 
         # Generate x and y values for plotting
         ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
         fitx = fit[0]*ploty**2 + fit[1]*ploty + fit[2]
+        """
+        # Fit a first order polynomial to each
+        fit = np.polyfit(y, x, 1)
+
+        # Generate x and y values for plotting
+        ploty = np.linspace(0, binary_warped.shape[0]-1, binary_warped.shape[0] )
+        fitx = fit[0]*ploty + fit[1]
+        
     else:
 		ploty = np.zeros(shape=(1, 1))
 		fitx = np.zeros(shape=(1, 1))
