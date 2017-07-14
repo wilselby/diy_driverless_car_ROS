@@ -44,7 +44,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <!-- Play data  -->
   <node pkg="rosbag" type="play" name="rosbag_player" output="screen"
-    args="-d 3 -l $(arg bag_path)/kitchen_lap2.bag" >
+    args="-d 1 -l $(arg bag_path)/kitchen_lap2.bag" >
   </node>   
   
 

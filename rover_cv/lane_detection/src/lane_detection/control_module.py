@@ -41,8 +41,10 @@ def adjustMotorSpeed(image,  pos,  speed,  velPublisher,  velPublisherStamped,  
      cp = 0
      vel_er = 0
      cd = 0
-     Kp = .0025
-     Kd = .0003   
+     Kp = .0025 #Gazebo
+     Kd = .0003  #Gazebo
+     #Kp = .02 #Elegoo
+     #Kd = .003   #Elegoo
      position_er = 0
      global position_er_last
      global last_time
@@ -69,7 +71,7 @@ def adjustMotorSpeed(image,  pos,  speed,  velPublisher,  velPublisherStamped,  
          cd = vel_er * Kd
 
          cmdvel.angular.z = cp - cd
-         cmdvel.angular.z = ld.limit(cmdvel.angular.z, -1, 1)
+         cmdvel.angular.z = ld.limit(cmdvel.angular.z, -1.57, 1.57)
        
          publishCmdVel(cmdvel,  velPublisher,  velPublisherStamped)
 
