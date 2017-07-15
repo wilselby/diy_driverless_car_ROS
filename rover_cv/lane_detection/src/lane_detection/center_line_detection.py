@@ -49,14 +49,14 @@ class lane_detection(object):
       
       # Raspicam Variables
       #self.corners = np.float32([[15,238], [138,187],[217,187],[238,238]]) #Checkerboard
-      self.corners = np.float32([[15,238], [101,140],[189,140],[297,238]]) #Kitchen
+      self.corners = np.float32([[5,238], [101,140],[189,140],[297,238]]) #Kitchen
       #self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track (HSV - yellow)
-      self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 
+      self.boundaries = [([28, 0, 0], [110, 150, 35])] #Kitchen (HSV - black) 
       
       self.global_fit = None
       
       self.intersectionPoint = (0,  0)  
-      self.speed = 0.2
+      self.speed = 0.15
       self.flag = 0
       self.avg = 0
 
@@ -164,7 +164,7 @@ class lane_detection(object):
 
                  # step 6: Calculate Setpoint
                  pts = np.vstack((fitx,ploty)).astype(np.float64).T
-                 self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=20)
+                 self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=3)
                  self.intersectionPoint = np.array([self.avg])
                  
                  # Draw the Setpoint onto the warped blank image

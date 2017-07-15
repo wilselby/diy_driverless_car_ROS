@@ -41,10 +41,10 @@ def adjustMotorSpeed(image,  pos,  speed,  velPublisher,  velPublisherStamped,  
      cp = 0
      vel_er = 0
      cd = 0
-     Kp = .0025 #Gazebo
-     Kd = .0003  #Gazebo
-     #Kp = .02 #Elegoo
-     #Kd = .003   #Elegoo
+     #Kp = .0025 #Gazebo
+     #Kd = .0003  #Gazebo
+     Kp = .01 #Elegoo
+     Kd = .003   #Elegoo
      position_er = 0
      global position_er_last
      global last_time
