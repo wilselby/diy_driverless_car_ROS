@@ -19,46 +19,48 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 ros::NodeHandle  nh;
 
+int reverse = 0;
+
 void cmdVelCB( const geometry_msgs::Twist& twist)
 {
   float throttle = 0; //twist.linear.x;
   float angle = 0; //twist.angular.z;
 
-  float x_range = .2 - 0;
+  float x_range = .2 - (-.2);
   float y_range = 1.57 - (-1.57);
 
   float a_range = 400 - 275;
-  float t_range = 400 - 300;
+  float t_range = 400 - 300;  
 
-  if (twist.linear.x < 0)
+  throttle = ((twist.linear.x - (-.2)) / (x_range / t_range)) + 300; 
+  angle = ((twist.angular.z - (-1)) / (y_range / a_range)) + 275; 
+
+  //Reverse on RC cars is a little tricky because the ESC must receive a reverse pulse, zero pulse, reverse pulse to start to go backwards. 
+  if (twist.linear.x <= 0 && reverse == 0)
   {
-    throttle = 300;
+     pwm.setPWM(0, 0, 300);
+     delay(200);
+     pwm.setPWM(0, 0, 350);
+     delay(200);
+     pwm.setPWM(0, 0, throttle);
+     //delay(2000);
+     reverse = 1;
   }
+  else if (twist.linear.x <= 0 && reverse > 0)
+  {
+    pwm.setPWM(0, 0, throttle);
+  }
+  else if (twist.linear.x > 0){
+    pwm.setPWM(0, 0, throttle);
+    reverse = 0;
+  }  
 
-  throttle = ((twist.linear.x - 0) / (x_range / t_range)) + 300 ; 
-  angle = ((twist.angular.z - (-1)) / (y_range / a_range)) +275 ; 
-
-  pwm.setPWM(0, 0, throttle );
   pwm.setPWM(1, 0, angle );
+
+  Serial.println(throttle);
   
 }
 
-/*
-  pwm.setPWM(0, 0, 350 );
-  // Drive throttle in a wave
-  for (uint16_t i=350; i<400; i += 5) {
-      //pwm.setPWM(0, 0, i );
-      //delay(200);
-  }
-
-  // Drive steering in a wave
-  for (uint16_t i=275; i<400; i += 5) {
-      pwm.setPWM(1, 0, i );
-      //pwm.setPWM(0, 0, i+30);
-      delay(200);
-  }
-  
- */
 
 ros::Subscriber<geometry_msgs::Twist> subCmdVel("/rover_velocity_controller/cmd_vel", cmdVelCB);
 
@@ -76,6 +78,11 @@ void setup() {
 
   nh.initNode();
   nh.subscribe(subCmdVel);
+
+  // send zero pulse to calibrate the ESC
+  pwm.setPWM(0, 0, 350 );
+  reverse = 0;
+
 }
 
 

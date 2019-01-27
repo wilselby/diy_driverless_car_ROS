@@ -12,7 +12,7 @@ subscribers:
   - name:     "web_ui"
     topic:    "/web_app/cmd_vel"
     timeout:  0.5
-    priority: 7
+    priority: 11
 
   - name:     "autonomy"
     topic:    "/platform_control/cmd_vel"

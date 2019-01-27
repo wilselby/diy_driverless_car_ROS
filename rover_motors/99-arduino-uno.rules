@@ -1,0 +1,2 @@
+# Arduino Uno
+SUBSYSTEMS=="usb", ATTRS{idProduct}=="0043", ATTRS{idVendor}=="2a03", SYMLINK+="arduino_uno"
