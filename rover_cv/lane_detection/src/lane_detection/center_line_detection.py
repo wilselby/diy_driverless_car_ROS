@@ -44,14 +44,14 @@ class lane_detection(object):
       self.imgRcvd = False
       
       # Gazebo Variables
-      #self.corners = np.float32([[44,560], [378,450],[902,450],[1215,560]]) #Gazebo Conde track
-      #self.boundaries = [([0, 0, 24], [255, 255, 255])] #Gazebo Conde track
+      self.corners = np.float32([[44,560], [378,450],[902,450],[1215,560]]) #Gazebo Conde track
+      self.boundaries = [([0, 0, 24], [255, 255, 255])] #Gazebo Conde track
       
       # Raspicam Variables
       #self.corners = np.float32([[15,238], [138,187],[217,187],[238,238]]) #Checkerboard
-      self.corners = np.float32([[15,238], [101,140],[189,140],[297,238]]) #Kitchen
+      #self.corners = np.float32([[15,238], [101,140],[189,140],[297,238]]) #Kitchen
       #self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track (HSV - yellow)
-      self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 
+      #self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 
       
       self.global_fit = None
       
@@ -92,7 +92,7 @@ class lane_detection(object):
              height = self.latestImage.shape[0]
              width = self.latestImage.shape[1]
              
-             """ Gazebo Conde 
+             """ Gazebo Conde """
              self.vertices = np.array( [[
                         [2.75*width/5, 3*height/5],
                         [2.25*width/5, 3*height/5],
@@ -101,21 +101,22 @@ class lane_detection(object):
                     ]], dtype=np.int32 )
              """
              
-             """ Raspicam """
-             """"original
+             # Raspicam 
+             original
              self.vertices = np.array( [[
                         [2.75*width/5, 3*height/5],
                         [2.25*width/5, 3*height/5],
                         [.5*width/5, height], 
                         [4.5*width/5, height]
                     ]], dtype=np.int32 )
-             """
+             
              self.vertices = np.array( [[
                         [3.75*width/5, 2*height/5],
                         [1.25*width/5, 2*height/5],
                         [.05*width/5, height], 
                         [4.95*width/5, height]
                     ]], dtype=np.int32 )
+             """
             
              self.maskedImage = ld.region_of_interest(self.latestImage, self.vertices)
              
@@ -164,7 +165,8 @@ class lane_detection(object):
 
                  # step 6: Calculate Setpoint
                  pts = np.vstack((fitx,ploty)).astype(np.float64).T
-                 self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=20)
+                 #self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=20) # Elegoo Kitchen
+                 self.avg = ld.movingAverage(self.avg, pts[-1][0],  N=1) # Gazebo
                  self.intersectionPoint = np.array([self.avg])
                  
                  # Draw the Setpoint onto the warped blank image

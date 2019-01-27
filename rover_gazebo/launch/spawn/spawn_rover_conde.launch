@@ -30,6 +30,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="laser_enabled" default="false"/>
   <arg name="ur5_enabled" default="false"/>
   <arg name="kinect_enabled" default="false"/>
+  <arg name="os1-64_enabled" default="false"/>
   <arg name="rover_gazebo_description" default="$(find rover_gazebo)/urdf/rover_description.gazebo.xacro"/>  
   <arg name="x" default="0.44"/>
   <arg name="y" default="-0.97"/>
@@ -44,7 +45,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     camera_enabled:=$(arg camera_enabled)
     laser_enabled:=$(arg laser_enabled)
     ur5_enabled:=$(arg ur5_enabled)
-    kinect_enabled:=$(arg kinect_enabled)"
+    kinect_enabled:=$(arg kinect_enabled)
+    os1-64_enabled:=$(arg os1-64_enabled)"
    />
 
   <!-- Spawn robot in gazebo -->

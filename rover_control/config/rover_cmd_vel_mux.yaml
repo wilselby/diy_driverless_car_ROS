@@ -4,6 +4,16 @@ subscribers:
     timeout:  0.5
     priority: 10
 
+  - name:     "keyboard"
+    topic:    "/key_teleop/cmd_vel"
+    timeout:  0.5
+    priority: 9
+
+  - name:     "web_ui"
+    topic:    "/web_app/cmd_vel"
+    timeout:  0.5
+    priority: 7
+
   - name:     "autonomy"
     topic:    "/platform_control/cmd_vel"
     timeout:  0.5

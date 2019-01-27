@@ -37,6 +37,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <param name="deadzone" value="0.12" />
   </node>
 
+  <!-- Load the Keyboard node -->
+  <node pkg ="rover_teleop" type="turtlebot_teleop_key.py" name="key_teleop" output="screen" >
+    <param name="forward_rate" value="0.3" />
+    <param name="rotation_rate" value="2.5" />
+    <remap from="key_vel" to="/key_teleop/cmd_vel" />
+  </node>
+  
+
   <!-- Load the Teleop node -->
   <node name="rover_joy_teleop" pkg="rover_teleop" type="rover_teleop" >
     <param name="axis_linear" value="1" type = "int" />
