@@ -195,7 +195,7 @@ def fit_polynomials(image, binary_warped, debug=False):
     x_current = x_base
 
     # Set the width of the windows +/- margin
-    margin = 100
+    margin = 50
 
     # Set minimum number of pixels found to recenter window
     minpix = 10
@@ -258,8 +258,8 @@ def fit_polynomials(image, binary_warped, debug=False):
         out_img[nonzeroy[lane_inds], nonzerox[lane_inds]] = [255, 0, 0]
         plt.imshow(out_img)
         plt.plot(fitx, ploty, color='yellow')
-        plt.xlim(0, 1280)
-        plt.ylim(720, 0)
+        #plt.xlim(0, 1280)
+        #plt.ylim(720, 0)
         plt.show()
     
     return ploty, fitx, fit

@@ -26,15 +26,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 <robot name="rover_robot_gazebo" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:include filename="$(find rover_gazebo)/urdf/accessories/kinect_camera.gazebo.xacro"/>
-
+ 
   <xacro:macro name="rover_robot_gazebo">
+
 
     <gazebo>
       <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
         <robotNamespace>/</robotNamespace>
         <updateRate>50.0</updateRate>
-        <bodyName>base_link</bodyName>
-        <topicName>imu/data</topicName>
+        <bodyName>imu_link</bodyName>
+        <topicName>imu/data_raw</topicName>
         <accelDrift>0.005 0.005 0.005</accelDrift>
         <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
         <rateDrift>0.005 0.005 0.005 </rateDrift>
@@ -48,9 +49,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       <plugin name="gps_controller" filename="libhector_gazebo_ros_gps.so">
         <updateRate>40</updateRate>
         <robotNamespace>/</robotNamespace>
-        <bodyName>base_link</bodyName>
+        <bodyName>navsat_link</bodyName>
         <frameId>base_link</frameId>
-        <topicName>navsat/fix</topicName>
+        <topicName>navsat/fix_raw</topicName>
         <velocityTopicName>navsat/vel</velocityTopicName>
         <referenceLatitude>49.9</referenceLatitude>
         <referenceLongitude>8.9</referenceLongitude>

@@ -29,12 +29,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Included URDF/XACRO Files -->
   <xacro:include filename="$(find rover_description)/urdf/decorations.urdf.xacro" />
   <xacro:include filename="$(find rover_description)/urdf/wheel.urdf.xacro" />
-
   <xacro:include filename="$(find rover_description)/urdf/accessories/kinect_camera.urdf.xacro"/>
-  <xacro:include filename="$(find rover_description)/urdf/accessories/sick_lms1xx_mount.urdf.xacro"/>
   <xacro:include filename="$(find rover_description)/urdf/accessories/sensor_arch.urdf.xacro"/>
   <xacro:include filename="$(find rover_description)/urdf/accessories/camera.urdf.xacro"/>
-  <xacro:include filename="$(find ur_description)/urdf/ur5.urdf.xacro" />
+  <xacro:include filename="$(find ouster_description)/urdf/OS1-64.urdf.xacro"/>
 
   <property name="M_PI" value="3.14159"/>
 
@@ -112,6 +110,16 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <gazebo reference="imu_link">
     </gazebo>
 
+    <!-- GPS link -->
+    <link name="navsat_link"/>
+    <joint name="navsat_joint" type="fixed">
+      <parent link="base_link" />
+      <child link="navsat_link" />
+      <origin xyz="0.19 0 0.149" rpy="0 -1.5708 3.1416" />
+    </joint>
+    <gazebo reference="navsat_link">
+    </gazebo>
+
     <!-- Wheel macros -->
     <xacro:rover_wheel wheel_prefix="front_left">
       <origin xyz="${wheelbase/2} ${track/2} ${wheel_vertical_offset}" rpy="0 0 0" />
@@ -128,35 +136,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 
    <xacro:rover_decorate /> 
-
-    <xacro:if value="$(arg ur5_enabled)">
-
-      <xacro:property name="reflect" value="-1" />
-
-      <!-- Spawn arm -->
-      <xacro:ur5_robot prefix="ur5_arm_" joint_limited="true"/>
-
-      <!-- Join arm -->
-      <joint name="ur5_arm_base" type="fixed">
-        <parent link="top_plate_link" />
-        <child link="ur5_arm_base_link" />
-        <origin xyz="0.3058 0 0.0065" rpy="0.0 0.0 -1.57" />
-      </joint>
-
-    </xacro:if>
-
-    <xacro:if value="$(arg laser_enabled)">
-
-      <sick_lms1xx_mount prefix="base" topic="scan"/>
-
-      <joint name="laser_mount_joint" type="fixed">
-        <!-- <origin xyz="$(optenv HUSKY_LMS1XX_XYZ 0.2206 0.0 0.00635)" rpy="$(optenv HUSKY_LMS1XX_RPY 0.0 0.0 0.0)" /> -->
-	<origin xyz="0.2206 0.0 0.00635" rpy="0.0 0.0 0.0" />
-        <parent link="top_plate_link" />
-        <child link="base_laser_mount" />
-      </joint>
-
-    </xacro:if>
 
     <xacro:if value="$(arg kinect_enabled)">
 
@@ -194,6 +173,20 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
        <origin xyz="0.062 0.0 0.01" rpy="0 0 0" />
     </xacro:camera_macro>
   </xacro:if>
+
+  <!--Mount a OS1-64-->
+  <xacro:if value="$(arg os1-64_enabled)">      
+    <xacro:OS1-64
+      parent="base_link"
+      name="ouster"
+      topic="/points"
+      hz="10"
+      samples="220"
+    >
+    <origin xyz="0 0 0.02" rpy="0 0 0" />
+    </xacro:OS1-64>
+  </xacro:if>
+
 
   </xacro:macro>
 
