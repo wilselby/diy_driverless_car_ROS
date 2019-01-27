@@ -53,10 +53,8 @@ class lane_detection(object):
       #self.boundaries = [([13, 102, 13], [53, 244, 34])] #LocalMotors track (HSV - yellow)
       #self.boundaries = [([28, 0, 0], [110, 150, 45])] #Kitchen (HSV - black) 
       
-      self.global_fit = None
-      
       self.intersectionPoint = (0,  0)  
-      self.speed = 0.2
+      self.speed = 0.15
       self.flag = 0
       self.avg = 0
 

@@ -1,0 +1,85 @@
+
+
+/* -----------------------------------------------------------------------------
+ * Example .ino file for arduino communication with ROS for the
+ * PCA9685 motor controller board
+ *----------------------------------------------------------------------------*/
+
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+#include <ros.h>
+#include <geometry_msgs/Twist.h>
+
+// called this way, it uses the default address 0x40
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+// you can also call it with a different address you want
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x41);
+// you can also call it with a different address and I2C interface
+//Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(&Wire, 0x40);
+
+ros::NodeHandle  nh;
+
+void cmdVelCB( const geometry_msgs::Twist& twist)
+{
+  float throttle = 0; //twist.linear.x;
+  float angle = 0; //twist.angular.z;
+
+  float x_range = .2 - 0;
+  float y_range = 1.57 - (-1.57);
+
+  float a_range = 400 - 275;
+  float t_range = 400 - 300;
+
+  if (twist.linear.x < 0)
+  {
+    throttle = 300;
+  }
+
+  throttle = ((twist.linear.x - 0) / (x_range / t_range)) + 300 ; 
+  angle = ((twist.angular.z - (-1)) / (y_range / a_range)) +275 ; 
+
+  pwm.setPWM(0, 0, throttle );
+  pwm.setPWM(1, 0, angle );
+  
+}
+
+/*
+  pwm.setPWM(0, 0, 350 );
+  // Drive throttle in a wave
+  for (uint16_t i=350; i<400; i += 5) {
+      //pwm.setPWM(0, 0, i );
+      //delay(200);
+  }
+
+  // Drive steering in a wave
+  for (uint16_t i=275; i<400; i += 5) {
+      pwm.setPWM(1, 0, i );
+      //pwm.setPWM(0, 0, i+30);
+      delay(200);
+  }
+  
+ */
+
+ros::Subscriber<geometry_msgs::Twist> subCmdVel("/rover_velocity_controller/cmd_vel", cmdVelCB);
+
+
+void setup() {
+  Serial.begin(9600);
+
+  pwm.begin();
+  pwm.setPWMFreq(60);  // 1600 is the maximum PWM frequency
+
+  // if you want to really speed stuff up, you can go into 'fast 400khz I2C' mode
+  // some i2c devices dont like this so much so if you're sharing the bus, watch
+  // out for this!
+  //Wire.setClock(400000);
+
+  nh.initNode();
+  nh.subscribe(subCmdVel);
+}
+
+
+void loop() {
+
+  nh.spinOnce();
+}
