@@ -35,6 +35,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="kinect_enabled" default="false"/>
   <arg name="os1-64_enabled" default="true"/>
   <arg name="rviz" default="false" doc="whether to run RVIZ"/>
+  <arg name="teb" default="true" doc="whether to use TEB local planner"/>
 
   <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
   <!-- world_name is wrt GAZEBO_RESOURCE_PATH environment variable -->
@@ -90,11 +91,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <rosparam file="$(find rover_2dnav)/planning/costmap_common_params.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find rover_2dnav)/planning/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find rover_2dnav)/planning/global_costmap_params.yaml" command="load" />
-    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params.yaml" command="load" />
+    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params.yaml" command="load" unless="$(arg teb)" />
+    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params_teb.yaml" command="load" if="$(arg teb)" />
+    <rosparam file="$(find rover_2dnav)/planning/move_base_params.yaml" command="load" if="$(arg teb)"/>
+
+    <!-- Run TEB local planner  -->
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" if="$(arg teb)" />
   </node>
 
   <!-- Load RVIZ -->
-  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rover_nav_2dmap.rviz" />
+  <group unless="$(arg teb)">
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rover_nav_2dmap.rviz" />
+  </group>
+  <group if="$(arg teb)">
+    <node if="$(arg rviz)" name="rviz_teb" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rover_nav_2dmap_teb.rviz" />
+  </group>
 
   <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"
