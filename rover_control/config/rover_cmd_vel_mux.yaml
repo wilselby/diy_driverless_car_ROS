@@ -17,7 +17,7 @@ subscribers:
   - name:     "autonomy"
     topic:    "/platform_control/cmd_vel"
     timeout:  0.5
-    priority: 2
+    priority: 12
 
   - name:     "interactive_marker"
     topic:    "/twist_marker_server/cmd_vel"

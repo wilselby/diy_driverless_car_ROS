@@ -60,6 +60,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
         <drift>0.0001 0.0001 0.0001</drift>
       </plugin>
     </gazebo>
+
+    <!-- Doesn't publish TF, just GT pose -->
+    <gazebo>
+    <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+      <alwaysOn>true</alwaysOn>
+      <updateRate>50.0</updateRate>
+      <bodyName>base_link</bodyName>
+      <topicName>ground_truth/odometry</topicName>
+      <gaussianNoise>0.01</gaussianNoise>
+      <frameName>world</frameName>
+      <xyzOffsets>0 0 0</xyzOffsets>
+      <rpyOffsets>0 0 0</rpyOffsets>
+    </plugin>
+    </gazebo>
+    
   
     <xacro:if value="$(arg ur5_enabled)">
       <!--Remove when https://github.com/ros-industrial/universal_robot/pull/168 is resolved -->
