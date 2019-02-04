@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="world_name" default="racecar" />
+  <arg name="gui" default="true" />
+  <arg name="run_camera" default="false"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find rover_gazebo)/worlds/$(arg world_name).world"/>
+    <arg name="gui" value="$(arg gui)"/>
+  </include>
+
+  <!-- urdf xml robot description loaded on the Parameter Server, converting the xacro into a proper urdf file-->
+  <param name="robot_description" command="$(find xacro)/xacro '$(find rover_description)/urdf/racecar.xacro'" />
+
+  <!-- push robot_description to factory and spawn robot in gazebo -->
+  <node name="racecar_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model racecar -z 0.05" />
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find rover_control)/config/racecar_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_manager" pkg="controller_manager" type="spawner" respawn="false"
+        output="screen" ns="/racecar" args="left_rear_wheel_velocity_controller right_rear_wheel_velocity_controller left_front_wheel_velocity_controller right_front_wheel_velocity_controller left_steering_hinge_position_controller right_steering_hinge_position_controller joint_state_controller"/>
+
+  <!-- servo node -->
+  <node pkg="rover_control" type="servo_commands.py" name="servo_commands" output="screen" />
+
+
+  <!-- My original packages -->
+
+  <!-- We do not have a robot connected, so publish fake joint states -->
+ <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+
+ <!-- Given the published joint states, publish tf for the robot links -->
+ <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Load Keybaord/Joystick node  -->
+  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
+
+  <!-- Load Rover Control information -->
+  <include file="$(find rover_control)/launch/rover_control_gazebo.launch"/> 
+
+  <!-- transform these vel msgs to robot commands via the twist2ack node -->
+  <node name="twist2ack" pkg="rbcar_twist2ack" type="twist2ack.py" respawn="true" output="screen"/>
+
+  <remap from="/racecar/ackermann_cmd_mux/output" to="/rover_velocity_controller/cmd_ack"/>
+
+  
+  <!--
+  <include file="$(find racecar_control)/launch/teleop.launch"/>
+  -->
+
+</launch>
