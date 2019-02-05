@@ -90,7 +90,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <alwaysOn>true</alwaysOn>
           <updateRate>${frame_rate}</updateRate>
           <cameraName>image</cameraName>
-          <imageTopicName>image_raw</imageTopicName>
+          <imageTopicName>raw</imageTopicName>
           <cameraInfoTopicName>camera_info</cameraInfoTopicName>
           <frameName>camera_${camera_suffix}_link</frameName>
           <hackBaseline>0.0</hackBaseline>

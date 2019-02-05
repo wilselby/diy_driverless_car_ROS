@@ -2,6 +2,8 @@
 <robot name="racecar" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:include filename="$(find rover_description)/urdf/macros.xacro" />
+  <xacro:include filename="$(find rover_description)/urdf/accessories/camera.urdf.xacro"/>
+  <xacro:include filename="$(find ouster_description)/urdf/OS1-64.urdf.xacro"/>
 
   <!-- Add chassis and it's inertia link -->
 
@@ -176,7 +178,59 @@
   
   <xacro:wheel_transmission name="right_front_wheel" />
 
-  <!-- Add Hokuyo laser scanner -->
+  <!-- Add IMU link -->
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <origin xyz="0.19 0 0.149" rpy="0 0 0" />
+    <parent link="chassis" />
+    <child link="imu_link" />
+  </joint>
+  <gazebo reference="imu_link">
+  </gazebo>
+
+    <!-- Add a GPS link 
+    <link name="navsat_link"/>
+    <joint name="navsat_joint" type="fixed">
+      <parent link="chassis" />
+      <child link="navsat_link" />
+      <origin xyz="0.19 0 0.149" rpy="0 0 0" />
+    </joint>
+    <gazebo reference="navsat_link">
+    </gazebo>
+  -->
+
+  <!--Mount a basic camera -->    
+    <xacro:camera_macro
+      namespace="openmv_cam"
+      parent_link="chassis"
+      camera_suffix=""
+      frame_rate="30"
+      horizontal_fov="2"
+      image_width="1280"
+      image_height="720"
+      image_format="R8G8B8"
+      min_distance="0.02"
+      max_distance="300"
+      noise_mean="0.0"
+      noise_stddev="0.007"
+      enable_visual="true"
+      >
+      <box size="0.02 0.02 0.02" />
+      <origin xyz="0.3 0.0 0.2" rpy="0 0 0" />
+    </xacro:camera_macro>
+
+  <!--Mount a OS1-64-->      
+    <xacro:OS1-64
+      parent="chassis"
+      name="ouster"
+      topic="/os1_cloud_node/points"
+      hz="10"
+      samples="220"
+      >
+      <origin xyz="0.15 0 0.25" rpy="0 0 0" />
+    </xacro:OS1-64>
+
+  <!-- Add Hokuyo laser scanner 
 
   <link name="laser">
     <inertial>
@@ -203,9 +257,10 @@
     <child link="laser" />
     <axis xyz="0 0 1" />
   </joint>
+-->
 
 
-  <!-- zed camera -->
+  <!-- zed camera 
   <link name="zed_camera_link">
     <inertial>
       <mass value="1e-5" />
@@ -232,13 +287,15 @@
     <parent link="chassis"/>
     <child link="zed_camera_link"/>
     <axis xyz="0 0 1" />
-    <!-- <limit lower="0.0" upper="0.0" effort="0.0" velocity="0.0" /> -->
   </joint>
+-->
 
 
-  <!-- zed camera lenses -->
-  <!-- It seems these have to have a non-zero mass to have a camera attached? -->
-  <link name="camera_link"><!-- this needs to match the name in zed_wrapper/zed_tf.launch -->
+<!-- zed camera lenses -->
+<!-- It seems these have to have a non-zero mass to have a camera attached? -->
+<!-- this needs to match the name in zed_wrapper/zed_tf.launch -->
+  <!--
+  <link name="camera_link">
     <inertial>
       <mass value="1e-5" />
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -265,10 +322,11 @@
     <child link="zed_camera_right_link"/>
     <axis xyz="0 0 1" />
   </joint>
+-->
 
-  <!-- Add the remaining xacros -->
+<!-- Add the remaining xacros -->
 
-  <xacro:include filename="$(find rover_description)/urdf/racecar.gazebo" />
-  <xacro:include filename="$(find rover_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find rover_description)/urdf/racecar.gazebo" />
+<xacro:include filename="$(find rover_description)/urdf/materials.xacro" />
 
 </robot>
