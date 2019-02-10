@@ -41,6 +41,20 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <rosparam command="load" file="$(find rover_control)/config/rc_localization.yaml" />
   </node>
 
+  <node pkg="robot_localization" type="navsat_transform_node" name="navsat_transform_node" respawn="true" output="screen">
+    <remap from="/gps/fix" to="/navsat/fix_raw"/>
+    <remap from="/imu/data" to="/os1_cloud_node/imu"/>
+    <param name="frequency" value="30"/>
+    <param name="magnetic_declination_radians" value="0"/>
+    <param name="yaw_offset" value="1.5707"/>
+    <param name="zero_altitude" value="false"/>
+    <param name="broadcast_utm_transform" value="false"/>
+    <param name="publish_filtered_gps" value="false"/>
+    <param name="wait_for_datum" value="false"/>
+    <param name="use_odometry_yaw" value="false"/>
+  </node>
+  
+
   <!-- transform these vel msgs to robot commands via the twist2ack node -->
   <node name="twist2ack" pkg="rbcar_twist2ack" type="twist2ack.py" respawn="true" output="screen"/>
   

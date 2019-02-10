@@ -2,6 +2,12 @@
 <launch>
   <arg name="world_name" default="racecar" />
   <arg name="gui" default="true" />
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="world_name" value="$(find rover_gazebo)/worlds/$(arg world_name).world"/>
@@ -12,6 +18,6 @@
   <param name="robot_description" command="$(find xacro)/xacro '$(find rover_description)/urdf/racecar.xacro'" />
 
   <!-- push robot_description to factory and spawn robot in gazebo -->
-  <node name="racecar_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-urdf -param robot_description -model racecar -z 0.05" />
+  <node name="racecar_spawn" pkg="gazebo_ros" type="spawn_model" output="screen" args="-x $(arg x) -y $(arg y) -z $(arg z) -R $(arg roll) -P $(arg pitch) -Y $(arg yaw) -urdf -param robot_description -model racecar -z 0.05" />
 
 </launch>

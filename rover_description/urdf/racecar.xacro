@@ -188,7 +188,7 @@
   <gazebo reference="imu_link">
   </gazebo>
 
-    <!-- Add a GPS link 
+    <!-- Add a GPS link -->
     <link name="navsat_link"/>
     <joint name="navsat_joint" type="fixed">
       <parent link="chassis" />
@@ -197,7 +197,7 @@
     </joint>
     <gazebo reference="navsat_link">
     </gazebo>
-  -->
+  
 
   <!--Mount a basic camera -->    
     <xacro:camera_macro
@@ -226,8 +226,9 @@
       topic="/os1_cloud_node/points"
       hz="10"
       samples="220"
+      min_range="0.1"
       >
-      <origin xyz="0.15 0 0.25" rpy="0 0 0" />
+      <origin xyz="0.2 0 0.3" rpy="0 0 0" />
     </xacro:OS1-64>
 
   <!-- Add Hokuyo laser scanner 

@@ -42,10 +42,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Spawn Camera Driver node --> 
   <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
 
-  <!-- Run the Web App-->
+  <!-- Run the Web App Support Nodes-->
   <group if="$(arg web_app)">
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
+    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
   </group>
 
   <!-- Spawn Image Transport node 

@@ -1,0 +1,11 @@
+obstacle_range: 9.5
+raytrace_range: 10.0
+footprint: [[-0.10,-0.15],[-0.10,0.15], [0.4, 0.15], [0.4,-0.15]]
+#footprint: [[-0.15,-0.22],[-0.15,0.22], [0.15, 0.22], [0.15,-0.22]]
+inflation_radius: 0.65
+cost_scaling_factor: 2
+observation_sources: laser_scan_sensor point_cloud_sensor
+laser_scan_sensor: {sensor_frame: ouster, data_type: LaserScan, topic: /scan_sim, marking: true, clearing: true, max_obstacle_height: 2.0, 
+min_obstacle_height: 0.1}
+point_cloud_sensor: {sensor_frame: 'ouster', data_type: PointCloud2, topic: '/os1_cloud_node/points', marking: true, clearing: true, max_obstacle_height: 2.0, 
+min_obstacle_height: 0.1}

@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_dbw_os1_wg.launch
+\file      rc_2dnav.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -25,74 +25,66 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 -->
 
 <launch>
-
-  <!-- Arguments -->
-  <arg name="display_cam" default="false" />
-  <arg name="record_cam" default="false" />
-  <arg name="camera_enabled" default="true" />
-  <arg name="laser_enabled" default="false"/>
-  <arg name="ur5_enabled" default="false"/>
-  <arg name="kinect_enabled" default="false"/>
-  <arg name="os1-64_enabled" default="true"/>
-  <arg name="rviz" default="false" doc="whether to run RVIZ"/>
+  <arg name="world_name" default="racecar_walker" />
+  <arg name="gui" default="true" />
+  <arg name="record" default="false" />
+  <arg name="web_app" default="false" />
+  <arg name="rviz" default="false" />
   <arg name="teb" default="true" doc="whether to use TEB local planner"/>
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="0"/>
 
-  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
-  <!-- world_name is wrt GAZEBO_RESOURCE_PATH environment variable -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find rover_gazebo)/worlds/willowgarage.world"/>
-    <arg name="paused" value="true"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
+  <!-- Load RC Car in Gazebo  -->
+  <include file="$(find rover_gazebo)/launch/spawn/racecar.launch">
+    <arg name="world_name" value="$(arg world_name)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <arg name="roll" value="$(arg roll)"/>
+    <arg name="pitch" value="$(arg pitch)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
   </include>
 
-  <!-- Spawn Rover Model -->
-  <include file="$(find rover_gazebo)/launch/spawn/spawn_rover_outdoor.launch"> 
-   <arg name="camera_enabled" value="$(arg camera_enabled)"/>
-   <arg name="laser_enabled" value="$(arg laser_enabled)"/>
-   <arg name="ur5_enabled" value="$(arg ur5_enabled)"/>
-   <arg name="kinect_enabled" value="$(arg kinect_enabled)"/>
-   <arg name="os1-64_enabled" value="$(arg os1-64_enabled)"/>
- </include>
-
- <!-- We do not have a robot connected, so publish fake joint states -->
- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+  <!-- We do not have a robot connected, so publish fake joint states -->
+ <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
  <!-- Given the published joint states, publish tf for the robot links -->
  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
- <!-- Load Keybaord/Joystick node  -->
- <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
+  <!-- Load Keybaord/Joystick node  -->
+  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
 
- <!-- Load Rover Control information -->
- <include file="$(find rover_control)/launch/rover_control_gazebo.launch"/> 
+  <!-- Load Rover Control information -->
+  <include file="$(find rover_control)/launch/rc_control_gazebo.launch"/> 
 
  <!-- Fake laser-->
- <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan.launch"/>
+ <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
 
  <!-- Load a Map  -->
  <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/wg_map.yaml" />
 
  <!-- Load AMCL  -->
- <include file="$(find rover_2dnav)/launch/include/rover_amcl.launch" >
+ <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch" >
     <!-- <arg name="x_pose" value="0.013" />
     <arg name="y_pose" value="0.046" /> -->
   </include>
 
-
   <!-- Load Navigation Stack  -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <param name="controller_frequency" value="10"/>
-    <remap from="odom" to="ground_truth/odometry" /> <!-- /odometry/filtered -->
-    <remap from="/cmd_vel" to="/platform_control/cmd_vel"/> 
-    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params.yaml" command="load" ns="global_costmap" />
-    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <remap from="odom" to="/odometry/filtered" />
+    <remap from="/cmd_vel" to="/platform_control/cmd_vel"/>
+    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params_rc.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params_rc.yaml" command="load" ns="local_costmap" />
     <rosparam file="$(find rover_2dnav)/planning/local_costmap_params.yaml" command="load" />
     <rosparam file="$(find rover_2dnav)/planning/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params.yaml" command="load" unless="$(arg teb)" />
-    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params_teb.yaml" command="load" if="$(arg teb)" />
+    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params_teb_ack.yaml" command="load" if="$(arg teb)" />
     <rosparam file="$(find rover_2dnav)/planning/move_base_params.yaml" command="load" if="$(arg teb)"/>
 
     <!-- Run TEB local planner  -->
@@ -101,16 +93,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <!-- Load RVIZ -->
   <group unless="$(arg teb)">
-    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rover_nav_2dmap.rviz" />
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_nav_2dmap.rviz" />
   </group>
   <group if="$(arg teb)">
-    <node if="$(arg rviz)" name="rviz_teb" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rover_nav_2dmap_teb.rviz" />
+    <node if="$(arg rviz)" name="rviz_teb" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_nav_2dmap_teb.rviz" />
   </group>
-
-  <!-- Record data  -->
+ 
+    <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"
-    args="-a -o $(find rover_gazebo)/data/rover_outdoor"
-    if="$(arg record_cam)" />  
+    args="-a -o $(find rover_gazebo)/data/rc_walker"
+    if="$(arg record)" /> 
+
+  <!-- Run the Web App Support Nodes-->
+  <group if="$(arg web_app)">
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+    <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
+    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
+  </group>
 
 
 

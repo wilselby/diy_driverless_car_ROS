@@ -20,15 +20,14 @@
 #include<iostream>
 
 using namespace std;
-float max_linear_vel = 0.2;
-float max_angular_vel = 1.5707;
-
 
 ros::Publisher pub;
 ros::Publisher pubStamped;
 ros::Subscriber sub;
 int i_velLinear;
 int i_velAngular;
+double max_linear_vel;
+double max_angular_vel;
 
 void callBack(const sensor_msgs::JoyConstPtr& joy)
 {
@@ -54,11 +53,21 @@ int main(int argc, char** argv) {
   ros::init(argc, argv, "rover_joy_teleop");	//Specify node name
   
   ros::NodeHandle n;
-  
-  i_velLinear = 1;
-  i_velAngular = 0;
-  n.param("axis_linear", i_velLinear, i_velLinear);
-  n.param("axis_angular", i_velAngular, i_velAngular);
+
+  n.param("/joy_teleop/rover_joy_teleop/axis_linear", i_velLinear, 1);
+  n.param("/joy_teleop/rover_joy_teleop/axis_angular", i_velAngular, 0);
+  n.param("/joy_teleop/rover_joy_teleop/max_linear_vel", max_linear_vel, 0.2);
+  //n.param("max_angular_vel", max_angular_vel, 1.5707);
+
+  if (n.param("/joy_teleop/rover_joy_teleop/max_angular_vel", max_angular_vel, 1.5707))
+    {
+      ROS_INFO("Got param: %f", max_angular_vel);
+    }
+  else
+    {
+      ROS_ERROR("Failed to get param 'max_angular_vel'");
+    }
+
   sub = n.subscribe("joy", 10, callBack);
   pub = n.advertise<geometry_msgs::Twist>("cmd_vel",1);
   pubStamped = n.advertise<geometry_msgs::TwistStamped>("cmd_vel_stamped",1);
