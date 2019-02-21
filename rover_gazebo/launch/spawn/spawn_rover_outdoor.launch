@@ -32,12 +32,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="kinect_enabled" default="false"/>
   <arg name="os1-64_enabled" default="false"/>
   <arg name="rover_gazebo_description" default="$(find rover_gazebo)/urdf/rover_description.gazebo.xacro"/>  
-  <arg name="x" default="0.44"/>
+  <arg name="x" default="-0.44"/>
   <arg name="y" default="5.5"/>
   <arg name="z" default="0.04"/>
   <arg name="roll" default="0"/>
   <arg name="pitch" default="0"/>
-  <arg name="yaw" default="0"/>
+  <arg name="yaw" default="1.57"/>
 
 
   <param name="robot_description" command="

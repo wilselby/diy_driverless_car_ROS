@@ -1,8 +1,16 @@
 obstacle_range: 9.5
 raytrace_range: 10.0
 footprint: [[-0.2,-0.2],[-0.2,0.2], [0.2, 0.2], [0.2,-0.2]]
-inflation_radius: 0.65
-cost_scaling_factor: 10.0
+inflation_radius: 0.25
+cost_scaling_factor: 5.0
 observation_sources: laser_scan_sensor point_cloud_sensor
-laser_scan_sensor: {sensor_frame: ouster, data_type: LaserScan, topic: /scan_sim, marking: true, clearing: true}
-point_cloud_sensor: {sensor_frame: 'ouster', data_type: PointCloud2, topic: '/points', marking: true, clearing: true}
+laser_scan_sensor: {sensor_frame: ouster, data_type: LaserScan, topic: /scan_sim, marking: true, clearing: true, max_obstacle_height: 2.0, 
+min_obstacle_height: 0.0}
+point_cloud_sensor: {sensor_frame: 'ouster', data_type: PointCloud2, topic: '/os1_cloud_node/points', marking: true, clearing: true, max_obstacle_height: 2.0, 
+min_obstacle_height: 0.1}
+
+# Unknown space
+track_unknown_space: true
+lethal_cost_threshold: 100
+unknown_cost_value: 255
+unknown_threshold: 5

@@ -1,7 +1,40 @@
+# Select local planner:
+# base_local_planner: "dwa_local_planner/DWAPlannerROS"
+base_local_planner: "base_local_planner/TrajectoryPlannerROS"
+#base_local_planner: "smooth_local_planner/SmoothLocalPlanner"
+
+# Global planner (choose one):
+base_global_planner: global_planner/GlobalPlanner
+# base_global_planner: navfn/NavfnROS
+# base_global_planner: ompl_global_planner/OmplGlobalPlanner
+
+shutdown_costmaps: false
+
+controller_frequency: 5.0 #before 5.0
+controller_patience: 3.0
+
+planner_frequency: 0.5
+planner_patience: 5.0
+
+oscillation_timeout: 10.0
+oscillation_distance: 0.2
+
+conservative_reset_dist: 0.1 #distance from an obstacle at which it will unstuck itself
+
+cost_factor: 1.0
+neutral_cost: 55
+lethal_cost: 253
+
+GlobalPlanner:
+  allow_unknown: true
+
+NavfnROS:
+  allow_unknown: true  # Allow space exploration
+
 TrajectoryPlannerROS:
   max_vel_x: 0.75
   min_vel_x: 0.0
-  max_vel_y: 0.75
+  max_vel_y: 0.0
   min_vel_y: 0.0
   max_rotational_vel: 20.0
   min_in_place_rotational_vel: 20.0
@@ -10,5 +43,44 @@ TrajectoryPlannerROS:
   min_vel_theta: -10.0
   acc_lim_theta: 10.2
   acc_lim_x: 0.5
-  acc_lim_y: 0.5
+  acc_lim_y: 0.0
   holonomic_robot: false
+
+# For DWA local planner:
+DWAPlannerROS:
+  max_vel_x: 0.4
+  min_vel_x: 0.0
+
+  min_vel_y: 0.0
+  max_vel_y: 0.0
+
+  max_vel_theta: 2.0
+  min_vel_theta: -2.0
+
+  acc_lim_x: 1.0
+  acc_lim_y: 0.0
+  acc_lim_theta: 5.0
+
+  yaw_goal_tolerance: 1
+  xy_goal_tolerance: 0.15
+  latch_xy_goal_tolerance: true
+
+  # Forward simulation parameters:
+  sim_time: 1.7  # default 1.7
+  vx_samples: 3 # default 3
+  vy_samples: 1  # default 10
+  vtheta_samples: 20  # default 20
+
+  dwa: true
+
+  holonomic_robot: false
+  meter_scoring: true
+
+  # Obstacle avoidance heaviness:
+  # and other factors to influence how much to stick to global path and how much to avoid obstacles.
+  path_distance_bias: 32.0  # default: 32
+  goal_distance_bias: 24.0  # default: 24
+  occdist_scale: 0.01  # default: 0.01
+  publish_traj_pc: true
+  publish_cost_grid_pc: true
+  global_frame_id: map

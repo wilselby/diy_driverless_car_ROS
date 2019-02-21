@@ -29,7 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="gui" default="true" />
   <arg name="record" default="false" />
   <arg name="web_app" default="false" />
-  <arg name="rviz" default="false" />
+  <arg name="rviz" default="true" />
   <arg name="teb" default="true" doc="whether to use TEB local planner"/>
   <arg name="x" default="0.0"/>
   <arg name="y" default="0.0"/>

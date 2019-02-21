@@ -17,3 +17,6 @@ conservative_reset_dist: 0.1 #distance from an obstacle at which it will unstuck
 cost_factor: 1.0
 neutral_cost: 55
 lethal_cost: 253
+
+
+

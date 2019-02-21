@@ -7,22 +7,22 @@ subscribers:
   - name:     "keyboard"
     topic:    "/key_teleop/cmd_vel"
     timeout:  0.5
-    priority: 9
+    priority: 2
 
   - name:     "web_ui"
     topic:    "/web_app/cmd_vel"
     timeout:  0.5
-    priority: 11
+    priority: 8
 
   - name:     "autonomy"
     topic:    "/platform_control/cmd_vel"
     timeout:  0.5
-    priority: 12
+    priority: 7
 
   - name:     "interactive_marker"
     topic:    "/twist_marker_server/cmd_vel"
     timeout:  0.5
-    priority: 8
+    priority: 6
 
   - name:     "external"
     topic:    "/cmd_vel"

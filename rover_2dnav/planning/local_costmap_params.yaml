@@ -7,7 +7,7 @@ local_costmap:
   rolling_window: true
   width: 5.0
   height: 5.0
-  resolution: 0.02
+  resolution: 0.075
   tranform_tolerance: 0.5
   planner_frequency: 1.0
   planner_patiente: 5.0

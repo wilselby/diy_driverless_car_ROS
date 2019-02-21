@@ -31,20 +31,25 @@ double max_angular_vel;
 
 void callBack(const sensor_msgs::JoyConstPtr& joy)
 {
-	  
   geometry_msgs::Twist vel;
-  vel.angular.z = max_angular_vel*joy->axes[0];
-  vel.linear.x = max_linear_vel*joy->axes[1];
-  pub.publish(vel);
-
   geometry_msgs::TwistStamped velStamped;
-  ros::Time current_time = ros::Time::now();
 
-  velStamped.header.stamp.sec = current_time.sec;
-  velStamped.header.stamp.nsec = current_time.nsec;
+  // Only publish if RT depressed. This prevents joy from over riding other topics
+	if (joy->axes[5] == -1){ 
+    
+    vel.angular.z = max_angular_vel*joy->axes[0];
+    vel.linear.x = max_linear_vel*joy->axes[1];
+    pub.publish(vel);
 
-  velStamped.twist = vel;
-  pubStamped.publish(velStamped);
+    
+    ros::Time current_time = ros::Time::now();
+
+    velStamped.header.stamp.sec = current_time.sec;
+    velStamped.header.stamp.nsec = current_time.nsec;
+
+    velStamped.twist = vel;
+    pubStamped.publish(velStamped);
+  }
 
 }
 

@@ -18,11 +18,6 @@
 <launch>
   <param name="/use_sim_time" value="true" />
 
-  <!--
-  <param name="robot_description"
-    textfile="$(find rover_description)/urdf/rover.urdf.xacro" />
-  -->
-
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
           -configuration_directory $(find rover_2dnav)/cartographer_ros/configuration_files
