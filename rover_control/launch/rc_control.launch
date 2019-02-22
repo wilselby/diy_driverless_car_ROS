@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_teleop.launch
+\file      rc_control.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -25,40 +25,22 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 -->
 
 <launch>
-
-  <arg name="joy_dev" default="/dev/input/js0" />
-  <arg name="joystick" default="true" />
-  <arg name="max_linear_vel" default="2.0" />
-  <arg name="max_angular_vel" default="0.34" />
-
-  <group ns="joy_teleop">
-
-  <!-- Load the Joystick node -->
-  <node respawn="true" pkg ="joy" type="joy_node" name="joy_node" >
-    <param name="dev" type="string" value="/dev/input/js0" />
-    <param name="deadzone" value="0.12" />
-    <param name="autorepeat_rate" value="10.0" />
-  </node>
-
-  <!-- Load the Keyboard node -->
-  <node pkg ="rover_teleop" type="turtlebot_teleop_key.py" name="key_teleop" output="screen" >
-    <param name="forward_rate" value="0.3" />
-    <param name="rotation_rate" value="2.5" />
-    <remap from="key_vel" to="/key_teleop/cmd_vel" />
-  </node>
   
-
-  <!-- Load the Teleop node -->
-  <node name="rover_joy_teleop" pkg="rover_teleop" type="rover_teleop" >
-    <param name="axis_linear" value="1" type = "int" />
-    <param name="axis_angular" value="0" type = "int" />
-    <param name="max_linear_vel" value="$(arg max_linear_vel)" />
-    <param name="max_angular_vel" value="$(arg max_angular_vel)" />
+  <arg name="ekf" default="false" />
+ 
+  <!-- EKF node -->
+  <node if="$(arg ekf)" pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam command="load" file="$(find rover_control)/config/rc_localization.yaml" />
   </node>
 
-  </group>
+  <!-- transform these vel msgs to robot commands via the twist2ack node -->
+  <node name="twist2ack" pkg="rbcar_twist2ack" type="twist2ack.py" respawn="true" output="screen"/>
+  
+  <!-- Command Mux -->
+  <node pkg="nodelet" type="nodelet" name="cmd_vel_mux" args="manager" />
+  <include file="$(find yocs_cmd_vel_mux)/launch/cmd_vel_mux.launch">
+    <arg name="nodelet_manager_name" value="cmd_vel_mux" />
+    <arg name="config_file" value="$(find rover_control)/config/rover_cmd_vel_mux.yaml" />
+  </include>
 
 </launch>
-
-
-

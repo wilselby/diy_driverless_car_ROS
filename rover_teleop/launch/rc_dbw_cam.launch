@@ -34,14 +34,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Load Joystick node  -->
   <include file="$(find rover_teleop)/launch/rover_teleop.launch">
     <arg name="joy_dev" value="/dev/input/js0" />
+    <arg name="max_linear_vel" default="0.2" />
+    <arg name="max_angular_vel" default="1.57" />
   </include> 
 
   <!-- Load Rover Control information --> 
   <include file="$(find rover_control)/launch/rc_control.launch"/> 
   
-  <!-- Load the Arduino node 
-  <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/arduino_uno" /> 
-  -->
+  <!-- Load the Arduino node --> 
+  <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/ttyACM0" /> 
 
   <!-- Spawn Camera Driver node --> 
   <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
