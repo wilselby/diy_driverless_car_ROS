@@ -26,10 +26,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 <launch>
 
-  <arg name="display_cam" default="false" />
-  <arg name="record_cam" default="false" />
-  <arg name="web_app" default="true" />i
+  <arg name="record" default="false" />
+  <arg name="web_app" default="true" />
   <arg name="rviz" default="false" />
+  <arg name="os1" default="false" /> 
+  <arg name="os1_hostname" default=""/>
+  <arg name="os1_udp_dest" default="192.168.1.1"/>
+  <arg name="lidar_mode" default="1024x10" />
+  <arg name="os1_image" default="true" />
+  <arg name="os1_viz" default="false" />
 
   <!-- Load Joystick node  -->
   <include file="$(find rover_teleop)/launch/rover_teleop.launch">
@@ -47,6 +52,17 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Spawn Camera Driver node --> 
   <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
 
+  <!-- Spawn OS1 ROS node -->
+  <group if="$(arg os1)">
+  <include file="$(find ouster_ros)/os1.launch">
+    <arg name="os1_hostname" value="$(arg os1_hostname)" />
+    <arg name="os1_udp_dest" value="$(arg os1_udp_dest)" />
+    <arg name="lidar_mode" value="$(arg lidar_mode)" />
+    <arg name="image" value="$(arg os1_image)" />
+    <arg name="viz" value="$(arg os1_viz)" /> 
+  </include>
+  </group>
+
   <!-- Run the Web App-->
   <group if="$(arg web_app)">
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
@@ -62,7 +78,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"
     args="-a -o $(find rover_teleop)/data/rc"
-    if="$(arg record_cam)" />   
+    if="$(arg record)" />   
 
 
 </launch>
