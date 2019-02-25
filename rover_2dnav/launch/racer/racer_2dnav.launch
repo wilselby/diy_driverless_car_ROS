@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<!--
+Software License Agreement (BSD)
+
+\file      racer_2dnav.launch
+\authors   Wil Selby <accounts@wilselby.com>
+\copyright Copyright (c) 2017, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * The name of the contributors may not be used to endorse or promote products derived from this software 
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<launch>
+  <arg name="record" default="false" />
+  <arg name="web_app" default="true" />
+  <arg name="rviz" default="true" />
+  <arg name="load_state_filename" default="" />
+  <arg name="teb" default="true" doc="whether to use TEB local planner"/>
+
+  <!-- EKF node -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
+    <rosparam command="load" file="$(find rover_control)/config/racer_localization.yaml" />
+  </node>
+
+  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/cart_2d.urdf" />
+
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+
+ <!-- Fake laser-->
+ <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+
+  <!-- Run Google Carographer to get odometry
+  <include file="$(find rover_2dnav)/cartographer_ros/launch/racer_2d_cartographer_localization.launch"> 
+    <arg name="load_state_filename" value="$(arg load_state_filename)" />
+  </include>
+  -->
+
+ <!-- Load a Map  -->
+ <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/patio_23feb.yaml" />
+
+ <!-- Load AMCL -->
+ <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch" >
+  </include>
+  
+
+
+  <!-- Load Navigation Stack  
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <param name="controller_frequency" value="10"/>
+    <remap from="odom" to="/odometry/filtered" />
+    <remap from="/cmd_vel" to="/platform_control/cmd_vel"/>
+    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params_rc.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find rover_2dnav)/planning/costmap_common_params_rc.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find rover_2dnav)/planning/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find rover_2dnav)/planning/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params.yaml" command="load" unless="$(arg teb)" />
+    <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params_teb_ack.yaml" command="load" if="$(arg teb)" />
+    <rosparam file="$(find rover_2dnav)/planning/move_base_params.yaml" command="load" if="$(arg teb)"/>   
+    -->
+
+    <!-- Run TEB local planner 
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" if="$(arg teb)" />
+  </node>
+  -->
+  
+
+  <!-- Load RVIZ -->
+  <group unless="$(arg teb)">
+    <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_nav_2dmap.rviz" />
+  </group>
+  <group if="$(arg teb)">
+    <node if="$(arg rviz)" name="rviz_teb" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_nav_2dmap_teb.rviz" />
+  </group>
+  
+ 
+    <!-- Record data  -->
+  <node pkg="rosbag" type="record" name="rosbag_record_all"
+    args="-a -o $(find rover_gazebo)/data/rc_walker"
+    if="$(arg record)" /> 
+
+  <!-- Run the Web App Support Nodes-->
+  <group if="$(arg web_app)">
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+    <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
+    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
+  </group>
+
+
+
+</launch>

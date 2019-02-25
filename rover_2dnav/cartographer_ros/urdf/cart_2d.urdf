@@ -32,7 +32,7 @@
     </visual>
   </link>
 
-  <link name="os1">
+  <link name="os1_lidar">
     <visual>
       <origin xyz="0.0 0.0 0.0" />
       <geometry>
@@ -52,7 +52,7 @@
 
   <joint name="os1_link_joint" type="fixed">
     <parent link="base_link" />
-    <child link="os1" />
+    <child link="os1_lidar" />
     <origin xyz="0.00 0. 0.03618" rpy="0. 0 0" />
   </joint>
 

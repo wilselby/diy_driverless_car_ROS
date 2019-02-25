@@ -53,7 +53,13 @@ TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = .01 --100
 
 POSE_GRAPH.optimization_problem.huber_scale = 1e2
 
+-- Localization --
+TRAJECTORY_BUILDER.pure_localization = true
+POSE_GRAPH.optimize_every_n_nodes = 20
+
+
 return options
 
 --TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 1
 --TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = .1
+

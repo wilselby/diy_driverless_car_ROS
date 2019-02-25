@@ -28,14 +28,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="record" default="false" />
   <arg name="web_app" default="false" />
   <arg name="rviz" default="true" />
-  
-  <!-- Load Keybaord/Joystick node  
-  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
-  -->
-
-  <!-- Load Rover Control information 
-  <include file="$(find rover_control)/launch/rc_control_gazebo.launch"/> 
-  -->
 
   <!-- Fake laser-->
   <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
