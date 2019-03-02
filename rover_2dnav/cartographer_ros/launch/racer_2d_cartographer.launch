@@ -17,7 +17,7 @@
 
 <launch>
 
-  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/cart_2d.urdf" />
+  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf" />
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
