@@ -25,14 +25,17 @@ SEC_PER_NANOSEC = 1e9
 MIN_PER_NANOSEC = 6e10
 
 LEFT_CAMERA_TOPIC = "/left_camera/image_color"
-CENTER_CAMERA_TOPIC = "/cam/camera_/image_raw"
+# CENTER_CAMERA_TOPIC = "/cam/camera_/image_raw"
+CENTER_CAMERA_TOPIC = "/openmv_cam/image/raw"
 RIGHT_CAMERA_TOPIC = "/right_camera/image_color"
 LEFT_CAMERA_COMPRESSED_TOPIC = LEFT_CAMERA_TOPIC + "/compressed"
 CENTER_CAMERA_COMPRESSED_TOPIC = CENTER_CAMERA_TOPIC + "/compressed"
 RIGHT_CAMERA_COMPRESSED_TOPIC = RIGHT_CAMERA_TOPIC + "/compressed"
 CAMERA_TOPICS = [CENTER_CAMERA_TOPIC]
 CENTER_CAMERA_TOPICS = [CENTER_CAMERA_TOPIC, CENTER_CAMERA_COMPRESSED_TOPIC]
-STEERING_TOPIC = "/cmd_vel_stamped"
+# STEERING_TOPIC = "/cmd_vel_stamped"
+# STEERING_TOPIC = "/joy_teleop/cmd_vel_stamped"
+STEERING_TOPIC = "/racecar/ackermann_cmd_mux/output"
 GPS_FIX_TOPIC = "/vehicle/gps/fix"
 GPS_FIX_NEW_TOPIC = "/fix"
 

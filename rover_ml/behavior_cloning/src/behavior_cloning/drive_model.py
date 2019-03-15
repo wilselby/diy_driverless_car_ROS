@@ -15,7 +15,8 @@ from geometry_msgs.msg import Twist, TwistStamped
 from sensor_msgs.msg import Image,  CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
-from keras.models import load_model
+import json
+from keras.models import model_from_json, load_model
 import h5py
 from keras import __version__ as keras_version
 
@@ -23,13 +24,14 @@ class cmd_vel_node(object):
     def __init__(self):
             
       """ROS Subscriptions """
-      self.image_sub = rospy.Subscriber("/raspicam_node/image/image_raw",Image,self.cvt_image) 
+      self.image_sub = rospy.Subscriber("/openmv_cam/image/raw",Image,self.cvt_image)
+      self.image_sub = rospy.Subscriber("/raspicam_node/image/raw",Image,self.cvt_image) 
       self.image_pub = rospy.Publisher("/image_converter/output_video",Image, queue_size=10)
       self.cmdVel_pub = rospy.Publisher("/platform_control/cmd_vel", Twist, queue_size=10)
       self.cmdVelStamped_pub = rospy.Publisher('/platform_control/cmd_vel_stamped', TwistStamped, queue_size=10)
 
       """ Variables """
-      self.model_path = 'home/wil/ros/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5'
+      self.model_path = 'home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model_ack.h5'
       self.cmdvel = Twist()
       self.baseVelocity = TwistStamped()
       self.bridge = CvBridge()
@@ -79,16 +81,22 @@ class cmd_vel_node(object):
     def run(self):
         
          # check that model Keras version is same as local Keras version
-         f = h5py.File('/home/wil/ros/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
+         f = h5py.File('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
          model_version = f.attrs.get('keras_version')
-         keras_version = None
-         keras_version = str(keras_version).encode('utf8')
+         keras_version_installed = None
+         keras_version_installed = str(keras_version).encode('utf8')
 
-         if model_version != keras_version:
-             print('You are using Keras version ', keras_version, ', but the model was built using ', model_version)
+         if model_version != keras_version_installed:
+             print('You are using Keras version ', keras_version_installed, ', but the model was built using ', model_version)
 
-         model = load_model('/home/wil/ros/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5')
+         # Model reconstruction from JSON file
+
+         with open('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
+             model = model_from_json(f.read())
+
+         model = load_model('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5.bak')
          
+         # Load weights into the new model
          print("Model loaded.")
      
          while True:
@@ -103,7 +111,7 @@ class cmd_vel_node(object):
                  
                  # step 3: 
                  
-                 self.cmdvel.linear.x = 0.2
+                 self.cmdvel.linear.x = 0.06
                  self.cmdvel.angular.z = float(model.predict(image_array[None, :, :, :], batch_size=1))
                  
                  #print(self.cmdvel.angular.z)

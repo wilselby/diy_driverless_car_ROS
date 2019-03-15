@@ -37,6 +37,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <node respawn="true" pkg ="joy" type="joy_node" name="joy_node" >
     <param name="dev" type="string" value="/dev/input/js0" />
     <param name="deadzone" value="0.12" />
+    <param name="autorepeat_rate" value="10.0" />
   </node>
 
   <!-- Load the Keyboard node -->
