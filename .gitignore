@@ -1,3 +1,5 @@
+/rover_ml/utils/mycreds.txt
+/rover_ml/utils/client_secrets.json
 /rover_ml/data/*
 !/rover_ml/data/.keep
 /rover_ml/output/*
@@ -15,3 +17,6 @@
 *~
 *.pyc
 *.swp
+*.bak
+*.hdf5
+*.h5

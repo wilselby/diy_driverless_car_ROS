@@ -66,6 +66,13 @@ def steering2dict(msg, steering_dict):
     steering_dict["angle"].append(msg.twist.angular.z)
     steering_dict["speed"].append(msg.twist.linear.x)
 
+#ackermann_msgs/AckermannDriveStamped
+def steering2dict_ack(msg, steering_dict):
+    steering_dict["timestamp"].append(msg.header.stamp.to_nsec())
+    steering_dict["angle"].append(msg.drive.steering_angle)
+    steering_dict["speed"].append(msg.drive.speed)
+
+
 def camera_select(topic, select_from):
     if topic.startswith('/l'):
         return select_from[0]
@@ -141,9 +148,9 @@ def main():
 
              elif topic == STEERING_TOPIC:
                  if debug_print:
-                     print("steering %d %f" % (timestamp, msg.twist.angular.z))
+                     print("steering %d %f" % (timestamp, msg.drive.steering_angle))
 
-                 steering2dict(msg, steering_dict)
+                 steering2dict_ack(msg, steering_dict)
                  stats['msg_count'] += 1
 
          # no need to cycle through readers in any order for dumping, rip through each on in sequence

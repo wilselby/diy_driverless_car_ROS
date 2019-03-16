@@ -62,10 +62,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Run Lane Detection Node -->
   <node name="behavior_cloning_node" pkg="behavior_cloning" type="drive_model.py" output="screen" /> 
 
-  <!-- spawn image viewer for lane detection output -->
+  <!-- spawn image viewer for lane detection output
     <node pkg="image_view" type="image_view" name="image_view" >
       <remap from="image" to="/image_converter/output_video" />
     </node>
+     -->
 
   <!-- Spawn Image Viewer node
   <node name="image_view" pkg="image_view" type="image_view" if="$(arg display_cam)" >
