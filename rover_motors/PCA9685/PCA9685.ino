@@ -4,10 +4,9 @@
  * Example .ino file for arduino communication with ROS for the
  * PCA9685 motor controller board
  *----------------------------------------------------------------------------*/
-
+#include <ros.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <ros.h>
 #include <geometry_msgs/Twist.h>
 #include <ackermann_msgs/AckermannDriveStamped.h>
 
