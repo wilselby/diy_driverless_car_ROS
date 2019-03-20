@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_dbw_cam.launch
+\file      rc_dbw_cam.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -26,23 +26,79 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 <launch>
 
-  <arg name="display_cam" default="false" />
-  <arg name="record_cam" default="false" />
+  <arg name="record" default="false" />
   <arg name="web_app" default="true" />
+  <arg name="rviz" default="false" />
+  <arg name="replay" default="false" />
+  <arg name="bag_filename" default="" />
 
-  <!-- Load Joystick node  -->
-  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
+  <!-- OS1 Paramaters -->
+  <arg name="os1" default="false" /> 
+  <arg name="os1_hostname" default="os1-991805000069.local"/>
+  <arg name="os1_udp_dest" default="192.168.10.1"/>
+  <arg name="lidar_mode" default="1024x10" />
+  <arg name="os1_image" default="true" />
+  <arg name="os1_viz" default="false" />
 
-  <!-- Load Rover Control information -->
-  <include file="$(find rover_control)/launch/rover_control.launch"/> 
+  <!-- Mapping Parameters -->
+  <arg name="map" default="false" />
 
-  <!-- Load the Arduino node -->
-  <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/arduino_uno" /> 
+  <!--   Replay .bag file
+  <node if="$(arg replay)" name="playbag" pkg="rosbag" type="play" args="- -clock $(arg bag_filename)" />
+  -->
 
-  <!-- Spawn Camera Driver node --> 
-  <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
+  <group unless="$(arg replay)">
+    <!-- Load Joystick node  -->
+    <include file="$(find rover_teleop)/launch/rover_teleop.launch">
+      <arg name="joy_dev" value="/dev/input/js0" />
+      <arg name="max_linear_vel" default="0.2" />
+      <arg name="max_angular_vel" default="1.57" />
+    </include> 
+    
+    <!-- Load the Arduino node --> 
+    <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/ttyACM0" /> 
 
-  <!-- Run the Web App Support Nodes-->
+    <!-- Spawn Camera Driver node --> 
+    <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
+
+    <!-- Spawn OS1 ROS node -->
+    <group if="$(arg os1)">
+    <include file="$(find ouster_ros)/os1.launch">
+      <arg name="os1_hostname" value="$(arg os1_hostname)" />
+      <arg name="os1_udp_dest" value="$(arg os1_udp_dest)" />
+      <arg name="lidar_mode" value="$(arg lidar_mode)" />
+      <arg name="image" value="$(arg os1_image)" />
+      <arg name="viz" value="$(arg os1_viz)" /> 
+    </include>
+    </group>
+
+  </group>
+
+  <group if="$(arg map)">
+    <!-- Fake laser-->
+    <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+
+    <!-- Run Google Carographer to create 2-D Occupancy Grid Map-->
+    <include file="$(find rover_2dnav)/cartographer_ros/launch/racer_2d_cartographer.launch"/> 
+
+  </group>
+
+  <!-- Load Rover Control information --> 
+  <include file="$(find rover_control)/launch/rc_control.launch"/> 
+
+
+  <group if="$(arg rviz)">
+
+    <!-- Load RVIZ -->
+    <node unless="$(arg map)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_teleop)/rviz/rc_base.rviz" />
+
+    <!-- Load RVIZ -->
+    <node if="$(arg map)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/racer_laser_map.rviz" />
+
+  </group>
+
+
+  <!-- Run the Web App-->
   <group if="$(arg web_app)">
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
     <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
@@ -53,17 +109,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <node name="republish" pkg="image_transport" type="republish" output="screen"
     args="compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw"/>
   -->
-
-  <!-- Spawn Image Viewer node 
-  <node name="image_view" pkg="image_view" type="image_view" 
-    if="$(arg display_cam)" />
-    <remap from="image" to="/raspicam_node/image/image_raw" />
-  -->
-
+  
   <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"
     args="-a -o $(find rover_teleop)/data/rc"
-    if="$(arg record_cam)" />   
+    if="$(arg record)" />   
 
 
 </launch>

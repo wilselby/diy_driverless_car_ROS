@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_dbw_os1_wg.launch
+\file      rc_amcl.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 

@@ -24,7 +24,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: Image
 Preferences:
   PromptSaveOnExit: true
 Visualization Manager:
@@ -104,59 +104,12 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        chassis:
+        os1_imu:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        chassis_inertia:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        imu_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        left_front_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_rear_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_steering_hinge:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        navsat_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        openmv_cam/camera__link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        ouster:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_front_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_rear_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        right_steering_hinge:
+        os1_lidar:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -366,6 +319,14 @@ Visualization Manager:
       Topic: /move_base/TebLocalPlannerROS/teb_poses
       Unreliable: false
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /trajectory_node_list
+      Name: MarkerArray
+      Namespaces:
+        Trajectory 0: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -391,16 +352,16 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 9.650894165039062
+      Distance: 15.532936096191406
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.07750943303108215
-        Y: 1.8697025775909424
-        Z: -0.9677184820175171
+        X: -2.4873571395874023
+        Y: 0.5863580703735352
+        Z: -1.8144625425338745
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
