@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+-->
+
+<launch>
+
+  <node pkg="laser_scan_matcher" type="laser_scan_matcher_node"
+    name="laser_scan_matcher_node" output="screen">
+
+    <param name="fixed_frame" value = "odom"/>
+    <param name="base_frame" value = "base_link"/>
+
+    <!-- Defaults to reading laser scan inputs -->
+    <remap from="scan" to="/scan_sim"/>
+
+    <!-- Debug IMU Comp Filter -->
+    <!-- Use when IMU Complementary Filter is Enabled -->
+    <param name="use_imu" value="true"/>
+    
+    <!-- Use pointcloud instead of laser scan -->
+    <!-- Limited to 10,000 rays, OS1-64 has 48,512 -->
+    <param name="use_cloud_input" value="false"/>
+    <param name="cloud_range_min" value="1.0"/>
+    <param name="cloud_range_max" value="50.0"/>
+    <remap from="cloud" to="/os1_cloud_node/points"/>       
+
+    <param name="publish_tf" value="false"/>
+    <param name="publish_pose_stamped" value="false"/>
+    
+    <param name="use_odom" value="false"/>
+    
+    <!-- Publish Pose with Covariance Stamped for input to EKF -->    
+    <param name="do_compute_covariance" value="1"/>
+    <param name="publish_pose_with_covariance" value="false"/>
+    <param name="publish_pose_with_covariance_stamped" value="true"/>
+
+  </node>
+
+</launch>

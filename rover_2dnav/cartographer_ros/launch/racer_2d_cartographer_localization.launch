@@ -18,10 +18,6 @@
 <launch>
 
   <arg name="load_state_filename" default="" />
-  
-  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/cart_2d.urdf" />
-
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
   <node name="cartographer_node" pkg="cartographer_ros"
       type="cartographer_node" args="
@@ -33,7 +29,9 @@
     <remap from="imu" to="/os1_cloud_node/imu" />
   </node>
 
+  <!-- Publish Map -->
   <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
       type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+  
       
 </launch>

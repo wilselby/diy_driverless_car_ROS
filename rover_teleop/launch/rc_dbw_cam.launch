@@ -34,14 +34,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <!-- OS1 Paramaters -->
   <arg name="os1" default="false" /> 
-  <arg name="os1_hostname" default="os1-991805000069.local"/>
+  <arg name="os1_hostname" default="os1-991901000601.local"/>
   <arg name="os1_udp_dest" default="192.168.10.1"/>
   <arg name="lidar_mode" default="1024x10" />
   <arg name="os1_image" default="true" />
   <arg name="os1_viz" default="false" />
-
-  <!-- Mapping Parameters -->
-  <arg name="map" default="false" />
 
   <!--   Replay .bag file
   <node if="$(arg replay)" name="playbag" pkg="rosbag" type="play" args="- -clock $(arg bag_filename)" />
@@ -55,8 +52,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       <arg name="max_angular_vel" default="1.57" /> <!-- max: 1.57 -->
     </include> 
     
-    <!-- Load the Arduino node --> 
+    <!-- Load the Arduino node -->
     <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="L298N_node" args="/dev/ttyACM0" /> 
+  
 
     <!-- Spawn Camera Driver node --> 
     <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
@@ -74,29 +72,34 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   </group>
 
-  <group if="$(arg map)">
-    <!-- Fake laser-->
-    <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+  <!-- Set time parameter if replaying data -->
+  <param name="/use_sim_time" value="true" if="$(arg replay)" />
 
-    <!-- Run Google Carographer to create 2-D Occupancy Grid Map-->
-    <include file="$(find rover_2dnav)/cartographer_ros/launch/racer_2d_cartographer.launch"/> 
-
-  </group>
+   <!-- IMU Complimentary Filter -->
+  <node name="imu_complementary_filter" pkg="imu_complementary_filter" type="complementary_filter_node">
+    <remap from="imu/data_raw" to="/os1_cloud_node/imu" />
+    <param name="fixed_frame" value="odom"/> 
+    <param name="publish_tf" value="false"/> 
+    <param name="publish_debug_topics" value="false"/> 
+  </node>
 
   <!-- Load Rover Control information --> 
-  <include file="$(find rover_control)/launch/rc_control.launch"/> 
+  <include file="$(find rover_control)/launch/rc_control.launch"> 
+    <arg name="ekf" value="true"/> 
+  </include>
 
+  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf" />
 
-  <group if="$(arg rviz)">
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-    <!-- Load RVIZ -->
-    <node unless="$(arg map)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_teleop)/rviz/rc_base.rviz" />
+  <!-- Laser Scan Matcher -->
+  <include file="$(find rover_2dnav)/launch/include/laser_scan_matcher.launch"/>
 
-    <!-- Load RVIZ -->
-    <node if="$(arg map)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/racer_laser_map.rviz" />
+  <!-- Fake laser-->
+  <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
 
-  </group>
-
+  <!-- Load RVIZ -->
+  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_teleop)/rviz/rc_base.rviz" />
 
   <!-- Run the Web App-->
   <group if="$(arg web_app)">

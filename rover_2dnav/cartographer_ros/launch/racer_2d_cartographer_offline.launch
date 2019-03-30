@@ -23,7 +23,7 @@
       type="cartographer_offline_node" args="
           -configuration_directory $(find rover_2dnav)/cartographer_ros/configuration_files
           -configuration_basenames racer_2d.lua
-          -urdf_filenames $(find rover_2dnav)/cartographer_ros/urdf/cart_2d.urdf
+          -urdf_filenames $(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf
           -bag_filenames $(arg bag_filenames)"
       output="screen">
     <remap from="scan" to="/scan_sim" />

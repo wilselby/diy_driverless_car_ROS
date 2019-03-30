@@ -118,10 +118,10 @@ if __name__ == '__main__':
 
     # Archive dataset folder
     tar_file = file_path.split("/")
-    tar_file = tar_file[len(tar_file) - 1]
-    tar_file = tar_file + ".tar.gz"
+    tar_file_base = tar_file[len(tar_file) - 1]
+    tar_file = tar_file_base + ".tar.gz"
     tf = tarfile.open(tar_file, mode="w:gz")
-    tf.add(file_path)
+    tf.add(file_path, arcname=tar_file_base)
     tf.close()
 
     # Upload to Google Drive
@@ -129,7 +129,9 @@ if __name__ == '__main__':
 
     # Move to destination folder
     output = file_path.split("/")
-    output = output[0]
+    output = '/'.join(output[0:2])
     output = output + "/" + tar_file
+
+    print("Moving {} to {}\n".format(tar_file, output))
 
     os.rename(tar_file, output)
