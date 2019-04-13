@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<!--
+Software License Agreement (BSD)
+
+\file      rc_laser_octomap.launch
+\authors   Wil Selby <accounts@wilselby.com>
+\copyright Copyright (c) 2017, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that
+the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the
+   following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+   following disclaimer in the documentation and/or other materials provided with the distribution.
+ * The name of the contributors may not be used to endorse or promote products derived from this software 
+   without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WAR-
+RANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, IN-
+DIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT
+OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+-->
+
+<launch>
+  <arg name="world_name" default="racecar_walker" />
+  <arg name="gui" default="true" />
+  <arg name="record" default="false" />
+  <arg name="web_app" default="false" />
+  <arg name="rviz" default="true" />
+  <arg name="teb" default="false" />
+  <arg name="frontier" default="false" />
+  <arg name="x" default="0.0"/>
+  <arg name="y" default="0.0"/>
+  <arg name="z" default="0.0"/>
+  <arg name="roll" default="0"/>
+  <arg name="pitch" default="0"/>
+  <arg name="yaw" default="0"/>
+
+  <!-- Load RC Car in Gazebo  -->
+  <include file="$(find rover_gazebo)/launch/spawn/racecar.launch">
+    <arg name="world_name" value="$(arg world_name)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="x" value="$(arg x)"/>
+    <arg name="y" value="$(arg y)"/>
+    <arg name="z" value="$(arg z)"/>
+    <arg name="roll" value="$(arg roll)"/>
+    <arg name="pitch" value="$(arg pitch)"/>
+    <arg name="yaw" value="$(arg yaw)"/>
+  </include>
+
+  <!-- We do not have a robot connected, so publish fake joint states -->
+ <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" ></node>
+
+ <!-- Given the published joint states, publish tf for the robot links -->
+ <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+
+  <!-- Load Keybaord/Joystick node  -->
+  <include file="$(find rover_teleop)/launch/rover_teleop.launch"/> 
+
+  <!-- Load Rover Control information -->
+  <include file="$(find rover_control)/launch/rc_control_gazebo.launch"/> 
+
+  <!-- Fake laser-->
+  <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+
+  <!-- Run Google Carographer to create 2-D Occupancy Grid Map-->
+  <include file="$(find rover_2dnav)/launch/include/octomap_mapping.launch"/>
+
+  <!-- Load a Map  -->
+<!--   <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/walker.yaml" /> -->
+
+
+  <!-- Record data  -->
+  <node pkg="rosbag" type="record" name="rosbag_record_all"
+    args="-a -o $(find rover_gazebo)/data/rc_walker"
+    if="$(arg record)" /> 
+
+  <!-- Run the Web App Support Nodes-->
+  <group if="$(arg web_app)">
+    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
+    <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
+    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
+  </group>
+
+  <!-- Load RVIZ -->
+  <group if="$(arg rviz)">
+  <node unless="$(arg frontier)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_laser_map.rviz" />
+  <node if="$(arg frontier)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/rc_nav_2dmap_teb.rviz" />
+  </group>
+
+</launch>
