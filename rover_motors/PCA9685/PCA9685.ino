@@ -33,7 +33,7 @@ float t_range = 360 - 300;
 void cmdAckCB( const ackermann_msgs::AckermannDriveStamped& ack)
 {
  
-  throttle = ((ack.drive.speed. - (-.2)) / (x_range / t_range)) + 300;
+  throttle = ((ack.drive.speed - (-.2)) / (x_range / t_range)) + 300;
   angle = ((ack.drive.steering_angle - (-1)) / (y_range / a_range)) + 275;
 
   // Handle reverse

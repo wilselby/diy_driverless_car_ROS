@@ -51,14 +51,19 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   -->  
 
  <!-- Load a Map  -->
- <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/patio_16mar.yaml" />
+ <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/office_24mar.yaml" />
 
- <!-- Load AMCL -->
+ <!-- Load AMCL 
  <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch">
   <arg name="x_pose" default="0" />
   <arg name="y_pose" default="0" /> 
   <arg name="yaw_pose" default="0" /> 
 </include> 
+-->
+
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="10 rover_2dnav rc_amcl.launch x_pose:=0.0 y_pose:=0.0 yaw_pose:=0.0"
+    name="timed_roslaunch" output="screen" />
 
   <!-- Octomap Server -->
   <include if="$(arg octomap)" file="$(find rover_2dnav)/launch/include/octomap_server.launch">
