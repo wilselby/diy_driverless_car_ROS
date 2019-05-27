@@ -19,9 +19,9 @@
             angle_min: -3.14 # -M_PI
             angle_max: 3.14 # M_PI
             angle_increment: 0.0031 # M_PI/1024
-            scan_time: 0.3333
+            scan_time: 0.1 #1 /10hz
             range_min: 1.0
-            range_max: 40.0
+            range_max: 60.0
             use_inf: true
             inf_epsilon: 1.0
 
