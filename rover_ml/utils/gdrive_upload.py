@@ -5,6 +5,7 @@ import tarfile
 import ast
 import argparse
 import os
+import sys
 
 # Import Google Libraries
 from pydrive.auth import GoogleAuth
@@ -123,9 +124,11 @@ if __name__ == '__main__':
     tf = tarfile.open(tar_file, mode="w:gz")
     tf.add(file_path, arcname=tar_file_base)
     tf.close()
+    print("\nCreated {} \n".format(tar_file))
 
     # Upload to Google Drive
     upload_file(drive, tar_file, folder_id)
+    print("\nUploaded {}".format(tar_file))
 
     # Move to destination folder
     output = file_path.split("/")

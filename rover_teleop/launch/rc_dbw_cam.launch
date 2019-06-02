@@ -57,8 +57,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="PCA9685_node">
       <param name="port" value="/dev/arduino_uno"/>
       <param name="baud" value="57600"/> 
-    </node> 
-  
+    </node>   
 
     <!-- Spawn Camera Driver node --> 
     <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
@@ -92,15 +91,21 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <arg name="ekf" value="$(arg ekf)"/> 
   </include>
 
+
   <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf" />
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 
-  <!-- Laser Scan Matcher -->
-  <include file="$(find rover_2dnav)/launch/include/laser_scan_matcher.launch"/>
+  
+  <!-- Only need LaserScan if using the EKF -->
+  <group if="$(arg ekf)">
+    <!-- Laser Scan Matcher -->
+    <include file="$(find rover_2dnav)/launch/include/laser_scan_matcher.launch"/>
 
-  <!-- Fake laser-->
-  <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+    <!-- Fake laser-->
+    <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+  </group>
+  
 
   <!-- Load RVIZ -->
   <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_teleop)/rviz/rc_base.rviz" />
