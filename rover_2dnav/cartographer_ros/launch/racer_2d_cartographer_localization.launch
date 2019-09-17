@@ -26,7 +26,7 @@
           -load_state_filename $(arg load_state_filename)"
       output="screen">
     <remap from="scan" to="/scan_sim" />
-    <remap from="imu" to="/os1_cloud_node/imu" />
+    <remap from="imu" to="/imu/data" />
   </node>
 
   <!-- Publish Map -->

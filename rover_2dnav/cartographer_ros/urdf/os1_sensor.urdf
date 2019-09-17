@@ -34,7 +34,7 @@
     <origin xyz="0 0 0" rpy="0 0 0" />
   </joint>
 
-<!-- Published by OS1
+<!-- Published by OS1 -->
 
 <link name="os1_imu">
     <visual>
@@ -67,6 +67,6 @@
     <child link="os1_lidar" />
     <origin xyz="0.0 0.0 0.03618" rpy="0 0 3.14159" />
   </joint>
--->
+
 
 </robot>

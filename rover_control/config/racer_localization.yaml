@@ -44,4 +44,4 @@ imu0_remove_gravitational_acceleration: true
 #imu0_queue_size: 10
 
 # only works if IMU provides orientation
-imu0_remove_gravitational_acceleration: true
+#imu0_remove_gravitational_acceleration: true
