@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      racer_laser_map.launch
+\file      rover_mlmodel_cam.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -10,7 +10,7 @@ Redistribution and use in source and binary forms, with or without modification,
 the following conditions are met:
  * Redistributions of source code must retain the above copyright notice, this list of conditions and the
    following disclaimer.
- * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the 
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the
    following disclaimer in the documentation and/or other materials provided with the distribution.
  * The name of the contributors may not be used to endorse or promote products derived from this software 
    without specific prior written permission.
@@ -26,28 +26,28 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 <launch>
   <arg name="record" default="false" />
-  <arg name="web_app" default="false" />
-  <arg name="rviz" default="true" />
+  <arg name="web_app" default="true" />
+  <arg name="rviz" default="false" />
+  <arg name="replay" default="false" />
 
-  <!-- Fake laser-->
-  <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
+  <!-- Set time parameter if replaying data -->
+  <param name="/use_sim_time" value="true" if="$(arg replay)" />
 
-  <!-- Run Google Carographer to create 2-D Occupancy Grid Map-->
-  <include file="$(find rover_2dnav)/cartographer_ros/launch/racer_2d_cartographer.launch"/> 
+  <!-- Load DBW -->
+   <include file="$(find rover_teleop)/launch/rc_dbw_cam.launch">
+     <arg name="replay" value="$(arg replay)" />
+     <arg name="web_app" value="$(arg web_app)" />
+     <arg name="ekf" value="true" />
+     <arg name="rviz" value="$(arg rviz)" />
+   </include> 
+
+  <!-- Run Lane Detection Node -->
+  <node name="behavior_cloning_node" pkg="behavior_cloning" type="drive_model.py" output="screen" respawn="true"/> 
 
   <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"
-    args="-a -o $(find rover_gazebo)/data/racer"
-    if="$(arg record)" /> 
-
-  <!-- Run the Web App Support Nodes-->
-  <group if="$(arg web_app)">
-    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
-    <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
-    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
-  </group>
-
-  <!-- Load RVIZ -->
-  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_2dnav)/rviz/racer_laser_map.rviz" />
+    args="-a -o $(find rover_teleop)/data/rover"
+    if="$(arg record)" />   
+  
 
 </launch>

@@ -28,38 +28,50 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="record" default="false" />
   <arg name="web_app" default="true" />
   <arg name="rviz" default="true" />
+  <arg name="replay" default="false" />
+  <arg name="os1" default="true" /> 
   <arg name="load_state_filename" default="" />
   <arg name="teb" default="true" doc="whether to use TEB local planner"/>
+  <arg name="octomap" default="false" />
 
-  <!-- EKF node -->
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
-    <rosparam command="load" file="$(find rover_control)/config/racer_localization.yaml" />
-  </node>
+  <!-- Set time parameter if replaying data -->
+  <param name="/use_sim_time" value="true" if="$(arg replay)" />
 
-  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/cart_2d.urdf" />
+    <!-- Load  DBW -->
+    <include file="$(find rover_teleop)/launch/rc_dbw_cam.launch">
+      <arg name="replay" value="$(arg replay)" />
+      <arg name="web_app" value="$(arg web_app)" />
+      <arg name="os1" value="$(arg os1)" />
+    </include> 
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
-
- <!-- Fake laser-->
- <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
-
-  <!-- Run Google Carographer to get odometry
+  <!-- Run Google Carographer to update map ?
   <include file="$(find rover_2dnav)/cartographer_ros/launch/racer_2d_cartographer_localization.launch"> 
     <arg name="load_state_filename" value="$(arg load_state_filename)" />
   </include>
-  -->
+  -->  
 
  <!-- Load a Map  -->
- <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/patio_23feb.yaml" />
+ <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/office_24mar.yaml" />
 
- <!-- Load AMCL -->
- <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch" >
+ <!-- Load AMCL 
+ <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch">
+  <arg name="x_pose" default="0" />
+  <arg name="y_pose" default="0" /> 
+  <arg name="yaw_pose" default="0" /> 
+</include> 
+-->
+
+  <node pkg="timed_roslaunch" type="timed_roslaunch.sh"
+    args="10 rover_2dnav rc_amcl.launch x_pose:=0.0 y_pose:=0.0 yaw_pose:=0.0"
+    name="timed_roslaunch" output="screen" />
+
+  <!-- Octomap Server -->
+  <include if="$(arg octomap)" file="$(find rover_2dnav)/launch/include/octomap_server.launch">
+    <arg name="frame_id" value="map"/> 
   </include>
-  
 
 
-  <!-- Load Navigation Stack  
+  <!-- Load Navigation Stack -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <param name="controller_frequency" value="10"/>
     <remap from="odom" to="/odometry/filtered" />
@@ -71,13 +83,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params.yaml" command="load" unless="$(arg teb)" />
     <rosparam file="$(find rover_2dnav)/planning/base_local_planner_params_teb_ack.yaml" command="load" if="$(arg teb)" />
     <rosparam file="$(find rover_2dnav)/planning/move_base_params.yaml" command="load" if="$(arg teb)"/>   
-    -->
-
-    <!-- Run TEB local planner 
+    <!-- Run TEB local planner -->
     <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" if="$(arg teb)" />
   </node>
-  -->
-  
+     
 
   <!-- Load RVIZ -->
   <group unless="$(arg teb)">
@@ -92,14 +101,5 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <node pkg="rosbag" type="record" name="rosbag_record_all"
     args="-a -o $(find rover_gazebo)/data/rc_walker"
     if="$(arg record)" /> 
-
-  <!-- Run the Web App Support Nodes-->
-  <group if="$(arg web_app)">
-    <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch"/>
-    <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
-    <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
-  </group>
-
-
 
 </launch>

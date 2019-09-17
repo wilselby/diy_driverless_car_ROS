@@ -14,17 +14,17 @@ TebLocalPlannerROS:
 
  # Robot
  cmd_angle_instead_rotvel: True #True if ackerman steering
- max_vel_x: 2.0
- max_vel_x_backwards: 1.0
- max_vel_theta: 0.3
- acc_lim_x: 1.5
- acc_lim_theta: 1.1
- min_turning_radius: 0.4
+ max_vel_x: 0.12
+ max_vel_x_backwards: 0.15
+ max_vel_theta: 1.5
+ acc_lim_x: 0.05
+ acc_lim_theta: 1.5
+ min_turning_radius: 1.5
  wheelbase: 0.2
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
    type: "line"
-   line_start: [-0.3, 0.0] # for type "line"
-   line_end: [0.3, 0.0] # for type "line"
+   line_start: [-0.2, 0.0] # for type "line"
+   line_end: [0.2, 0.0] # for type "line"
 
  # GoalTolerance
 
@@ -34,7 +34,7 @@ TebLocalPlannerROS:
 
  # Obstacles
 
- min_obstacle_dist: 0.16
+ min_obstacle_dist: 0.05
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 0.35
  obstacle_poses_affected: 30

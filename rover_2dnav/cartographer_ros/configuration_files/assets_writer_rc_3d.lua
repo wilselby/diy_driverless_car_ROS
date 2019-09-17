@@ -22,7 +22,7 @@ VOXEL_SIZE = 5e-2
 include "transform.lua"
 
 options = {
-  tracking_frame = "base_link",
+  tracking_frame = "os1_imu",
   pipeline = {
     {
       action = "min_max_range_filter",
@@ -41,8 +41,20 @@ options = {
     {
       action = "write_xray_image",
       voxel_size = VOXEL_SIZE,
+      filename = "xray_yz_all",
+      transform = YZ_TRANSFORM,
+    },
+    {
+      action = "write_xray_image",
+      voxel_size = VOXEL_SIZE,
       filename = "xray_xy_all",
       transform = XY_TRANSFORM,
+    },
+    {
+      action = "write_xray_image",
+      voxel_size = VOXEL_SIZE,
+      filename = "xray_xz_all",
+      transform = XZ_TRANSFORM,
     },
     -- We now use the intensities to color our points. We apply a linear
     -- transform to clamp our intensity values into [0, 255] and then use this
@@ -51,17 +63,29 @@ options = {
     --
     -- We write xrays again. These now use geometry and the intensities to
     -- color pixels - they look quite similar, just a little lighter.
---    {
---      action = "intensity_to_color",
---      min_intensity = 0.,
---      max_intensity = 4095.,
---    },
---    {
---      action = "write_xray_image",
---      voxel_size = VOXEL_SIZE,
---      filename = "xray_xy_all_intensity",
---      transform = XY_TRANSFORM,
---    },
+   {
+     action = "intensity_to_color",
+     min_intensity = 0.,
+     max_intensity = 4095.,
+   },
+    {
+      action = "write_xray_image",
+      voxel_size = VOXEL_SIZE,
+      filename = "xray_yz_all_intensity",
+      transform = YZ_TRANSFORM,
+    },
+    {
+      action = "write_xray_image",
+      voxel_size = VOXEL_SIZE,
+      filename = "xray_xy_all_intensity",
+      transform = XY_TRANSFORM,
+    },
+    {
+      action = "write_xray_image",
+      voxel_size = VOXEL_SIZE,
+      filename = "xray_xz_all_intensity",
+      transform = XZ_TRANSFORM,
+    },
 
     -- We also write a PLY file at this stage, because gray points look good.
     -- The points in the PLY can be visualized using

@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rc_dbw_cam.launch
+\file      rc_calibrate.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -30,20 +30,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="web_app" default="true" />
   <arg name="rviz" default="false" />
   <arg name="replay" default="false" />
-  <arg name="bag_filename" default="" />
-  <arg name="ekf" default="true" />
 
-  <!-- OS1 Paramaters -->
-  <arg name="os1" default="false" /> 
-  <arg name="os1_hostname" default="os1-991901000601.local"/>
-  <arg name="os1_udp_dest" default="192.168.10.1"/>
-  <arg name="lidar_mode" default="1024x10" />
-  <arg name="os1_image" default="true" />
-  <arg name="os1_viz" default="false" />
-
-  <!--   Replay .bag file
-  <node if="$(arg replay)" name="playbag" pkg="rosbag" type="play" args="- -clock $(arg bag_filename)" />
-  -->
+  <!-- Set time parameter if replaying data -->
+  <param name="/use_sim_time" value="true" if="$(arg replay)" />
 
   <group unless="$(arg replay)">
     <!-- Load Joystick node  -->
@@ -57,55 +46,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <node respawn="true" pkg ="rosserial_python" type="serial_node.py" name="PCA9685_node">
       <param name="port" value="/dev/arduino_uno"/>
       <param name="baud" value="57600"/> 
-    </node>   
-
-    <!-- Spawn Camera Driver node --> 
-    <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
-
-    <!-- Spawn OS1 ROS node -->
-    <group if="$(arg os1)">
-    <include file="$(find ouster_ros)/os1.launch">
-      <arg name="os1_hostname" value="$(arg os1_hostname)" />
-      <arg name="os1_udp_dest" value="$(arg os1_udp_dest)" />
-      <arg name="lidar_mode" value="$(arg lidar_mode)" />
-      <arg name="image" value="$(arg os1_image)" />
-      <arg name="viz" value="$(arg os1_viz)" /> 
-    </include>
-    </group>
+    </node>
 
   </group>
-
-  <!-- Set time parameter if replaying data -->
-  <param name="/use_sim_time" value="true" if="$(arg replay)" />
-
-   <!-- IMU Complimentary Filter -->
-  <node name="imu_complementary_filter" pkg="imu_complementary_filter" type="complementary_filter_node">
-    <remap from="imu/data_raw" to="/os1_cloud_node/imu" />
-    <param name="fixed_frame" value="odom"/> 
-    <param name="publish_tf" value="false"/> 
-    <param name="publish_debug_topics" value="false"/> 
-  </node>
 
   <!-- Load Rover Control information --> 
   <include file="$(find rover_control)/launch/rc_control.launch"> 
-    <arg name="ekf" value="$(arg ekf)"/> 
+    <arg name="ekf" value="false"/> 
   </include>
-
-
-  <param name="robot_description" textfile="$(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf" />
-
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
-
-  
-  <!-- Only need LaserScan if using the EKF -->
-  <group if="$(arg ekf)">
-    <!-- Laser Scan Matcher -->
-    <include file="$(find rover_2dnav)/launch/include/laser_scan_matcher.launch"/>
-
-    <!-- Fake laser-->
-    <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
-  </group>
-  
 
   <!-- Load RVIZ -->
   <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_teleop)/rviz/rc_base.rviz" />
@@ -116,11 +64,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <node respawn="true" pkg="web_video_server" type="web_video_server" name="web_video_server" />
     <node respawn="true" pkg="tf2_web_republisher" type="tf2_web_republisher" name="tf2_web_republisher" />
   </group>
-
-  <!-- Spawn Image Transport node 
-  <node name="republish" pkg="image_transport" type="republish" output="screen"
-    args="compressed in:=/raspicam_node/image raw out:=/raspicam_node/image/image_raw"/>
-  -->
   
   <!-- Record data  -->
   <node pkg="rosbag" type="record" name="rosbag_record_all"

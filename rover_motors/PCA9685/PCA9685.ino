@@ -4,10 +4,9 @@
  * Example .ino file for arduino communication with ROS for the
  * PCA9685 motor controller board
  *----------------------------------------------------------------------------*/
-
+#include <ros.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
-#include <ros.h>
 #include <geometry_msgs/Twist.h>
 #include <ackermann_msgs/AckermannDriveStamped.h>
 
@@ -34,7 +33,7 @@ float t_range = 360 - 300;
 void cmdAckCB( const ackermann_msgs::AckermannDriveStamped& ack)
 {
  
-  throttle = ((ack.drive.speed. - (-.2)) / (x_range / t_range)) + 300;
+  throttle = ((ack.drive.speed - (-.2)) / (x_range / t_range)) + 300;
   angle = ((ack.drive.steering_angle - (-1)) / (y_range / a_range)) + 275;
 
   // Handle reverse

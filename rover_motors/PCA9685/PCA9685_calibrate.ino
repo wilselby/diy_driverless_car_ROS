@@ -24,6 +24,38 @@ int reverse = 0;
 float throttle = 0; 
 float angle = 0; 
 
+void cmdAckCB( const ackermann_msgs::AckermannDriveStamped& ack)
+{
+ 
+  throttle = ack.drive.speed;
+  angle = ack.drive.steering_angle;
+
+  // Handle reverse
+  if (ack.drive.speed <= 0 && reverse == 0)
+  {
+     pwm.setPWM(0, 0, 300);
+     delay(200);
+     pwm.setPWM(0, 0, 350);
+     delay(200);
+     pwm.setPWM(0, 0, throttle);
+     //delay(2000);
+     reverse = 1;
+  }
+  else if (ack.drive.speed <= 0 && reverse > 0)
+  {
+    pwm.setPWM(0, 0, throttle);
+  }
+  else if (ack.drive.speed > 0){
+    pwm.setPWM(0, 0, throttle);
+    reverse = 0;
+  }
+
+  pwm.setPWM(1, 0, angle );
+
+  Serial.println(throttle);
+
+}
+
 void cmdVelCB( const geometry_msgs::Twist& twist)
 {
  
@@ -60,6 +92,8 @@ void cmdVelCB( const geometry_msgs::Twist& twist)
 
 ros::Subscriber<geometry_msgs::Twist> subCmdVel("/rover_velocity_controller/cmd_vel", cmdVelCB);
 
+ros::Subscriber<ackermann_msgs::AckermannDriveStamped> subAck("/racecar/ackermann_cmd_mux/output", cmdAckCB);
+
 
 void setup() {
   Serial.begin(9600);
@@ -75,6 +109,7 @@ void setup() {
 
   nh.initNode();
   nh.subscribe(subCmdVel);
+  nh.subscribe(subAck);
 
   // send zero pulse to calibrate the ESC
   pwm.setPWM(0, 0, 350 );

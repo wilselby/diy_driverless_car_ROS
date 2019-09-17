@@ -9,14 +9,39 @@ frequency: 50
 
 print_diagnostics: false
 
+# Laser Scan Matching Pose Estimate
+pose0: /pose_with_covariance_stamped
+pose0_config: [true, true, true,
+               false, false, false,
+               false, false, false,
+               false, false, false,
+               false, false, false]
+pose0_differential: false
+pose0_queue_size: 10
 
 
-imu0: /os1_cloud_node/imu
+# IMU Complementary Filter output
+imu0: /imu/data
+# Orientation, angular veloctiy, linear acceleration
 imu0_config: [false, false, false,
               true, true, true,
               false, false, false,
               true, true, true,
-              false, false, false]
+              true, true, false]
 imu0_differential: false
 imu0_queue_size: 10
+# only works if IMU provides orientation
+imu0_remove_gravitational_acceleration: true
+
+# Ouster IMU
+#imu0: /os1_cloud_node/imu
+#imu0_config: [false, false, false,
+#              false, false, false,
+#              false, false, false,
+#              false, false, true,
+#              true, true, false]
+#imu0_differential: false
+#imu0_queue_size: 10
+
+# only works if IMU provides orientation
 imu0_remove_gravitational_acceleration: true

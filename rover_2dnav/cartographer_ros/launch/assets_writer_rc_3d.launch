@@ -16,23 +16,17 @@
 -->
 
 <launch>
-
-  <param name="/use_sim_time" value="true" />
-
-  <node name="cartographer_offline_node" pkg="cartographer_ros"
-      type="cartographer_offline_node" args="
+  <node name="cartographer_assets_writer" pkg="cartographer_ros" required="true"
+      type="cartographer_assets_writer" args="
           -configuration_directory $(find rover_2dnav)/cartographer_ros/configuration_files
-          -configuration_basenames racer_2d.lua
-          -urdf_filenames $(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf
-          -bag_filenames $(arg bag_filenames)"
+          -configuration_basename assets_writer_rc_3d.lua
+          -urdf_filename $(find rover_2dnav)/cartographer_ros/urdf/os1_sensor.urdf
+          -bag_filenames $(arg bag_filenames)
+          -pose_graph_filename $(arg pose_graph_filename)"
       output="screen">
-    <remap from="scan" to="/scan_sim" />
-    <remap from="imu" to="/os1_cloud_node/imu" />
+    <!-- <remap from="scan" to="/scan_sim" /> -->
+    <remap from="points2" to="/os1_cloud_node/points" />
+    <!-- <remap from="imu" to="/imu/data" />  IMU Comp filter output -->
+    <remap from="imu" to="/os1_cloud_node/imu" /> 
   </node>
-
-
-
-  <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
-      type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
-
 </launch>

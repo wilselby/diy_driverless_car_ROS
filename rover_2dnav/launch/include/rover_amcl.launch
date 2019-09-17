@@ -29,6 +29,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- declare arg to be passed in -->
   <arg name="x_pose" default="0" />
   <arg name="y_pose" default="0" /> 
+  <arg name="yaw_pose" default="1.57" /> 
 
 <node pkg="amcl" type="amcl" name="amcl">
   <remap from="/scan" to="/scan_sim"/>  
@@ -36,6 +37,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <param name="odom_model_type" value="diff"/>
   <param name="initial_pose_x" value="$(arg x_pose)"/>
   <param name="initial_pose_y" value="$(arg y_pose)"/> 
+  <param name="initial_pose_a" value="$(arg yaw_pose)"/> 
   <param name="transform_tolerance" value="0.2" />
   <param name="gui_publish_rate" value="10.0"/>
   <param name="laser_max_beams" value="1000"/>

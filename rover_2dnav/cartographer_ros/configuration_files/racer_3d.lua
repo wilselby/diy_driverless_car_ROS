@@ -27,10 +27,10 @@ options = {
   use_odometry = false,
   use_nav_sat = false,
   use_landmarks = false,
-  num_laser_scans = 1,
+  num_laser_scans = 0,
   num_multi_echo_laser_scans = 0,
   num_subdivisions_per_laser_scan = 1,
-  num_point_clouds = 0,
+  num_point_clouds = 1,
   lookup_transform_timeout_sec = 0.2,
   submap_publish_period_sec = 0.3,
   pose_publish_period_sec = 5e-3,
@@ -53,13 +53,7 @@ TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = 1
 
 POSE_GRAPH.optimization_problem.huber_scale = 1e2
 
--- Localization --
-TRAJECTORY_BUILDER.pure_localization = true
-POSE_GRAPH.optimize_every_n_nodes = 20
-
-
 return options
 
 --TRAJECTORY_BUILDER_2D.num_accumulated_range_data = 1
 --TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = .1
-

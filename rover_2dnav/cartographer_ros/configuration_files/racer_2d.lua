@@ -20,9 +20,9 @@ options = {
   trajectory_builder = TRAJECTORY_BUILDER,
   map_frame = "map",
   tracking_frame = "os1_imu",
-  published_frame = "base_link",
+  published_frame = "odom",
   odom_frame = "odom",
-  provide_odom_frame = true,
+  provide_odom_frame = false,
   publish_frame_projected_to_2d = false,
   use_odometry = false,
   use_nav_sat = false,
@@ -49,7 +49,7 @@ TRAJECTORY_BUILDER_2D.use_imu_data = true
 TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.linear_search_window = 0.15
 TRAJECTORY_BUILDER_2D.real_time_correlative_scan_matcher.angular_search_window = math.rad(35.)
 TRAJECTORY_BUILDER_2D.min_range = 1
-TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = 10000
+TRAJECTORY_BUILDER_2D.imu_gravity_time_constant = 1
 
 POSE_GRAPH.optimization_problem.huber_scale = 1e2
 
