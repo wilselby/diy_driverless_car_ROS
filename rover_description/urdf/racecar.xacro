@@ -178,16 +178,6 @@
   
   <xacro:wheel_transmission name="right_front_wheel" />
 
-  <!-- Add IMU link -->
-  <link name="imu_link"/>
-  <joint name="imu_joint" type="fixed">
-    <origin xyz="0.19 0 0.149" rpy="0 0 0" />
-    <parent link="chassis" />
-    <child link="imu_link" />
-  </joint>
-  <gazebo reference="imu_link">
-  </gazebo>
-
     <!-- Add a GPS link -->
     <link name="navsat_link"/>
     <joint name="navsat_joint" type="fixed">
@@ -197,9 +187,10 @@
     </joint>
     <gazebo reference="navsat_link">
     </gazebo>
+    
   
 
-  <!--Mount a basic camera -->    
+  <!--Mount a basic camera -->
     <xacro:camera_macro
       namespace="openmv_cam"
       parent_link="chassis"
@@ -218,18 +209,19 @@
       <box size="0.02 0.02 0.02" />
       <origin xyz="0.3 0.0 0.2" rpy="0 0 0" />
     </xacro:camera_macro>
+     
 
   <!--Mount a OS1-64-->      
     <xacro:OS1-64
       parent="chassis"
-      name="ouster"
-      topic="/os1_cloud_node/points"
+      name="os1_sensor"
       hz="10"
       samples="220"
       min_range="0.1"
       >
       <origin xyz="0.2 0 0.3" rpy="0 0 0" />
     </xacro:OS1-64>
+    
 
   <!-- Add Hokuyo laser scanner 
 

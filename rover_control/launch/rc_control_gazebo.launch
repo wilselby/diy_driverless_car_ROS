@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_control_gazebo.launch
+\file      rc_control_gazebo.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -53,6 +53,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <param name="wait_for_datum" value="false"/>
     <param name="use_odometry_yaw" value="false"/>
   </node>
+  
   
 
   <!-- transform these vel msgs to robot commands via the twist2ack node -->

@@ -34,7 +34,7 @@
           </light>
 
   <include>
-    <uri>model://racecar_description/models/walker_racecourse</uri>
+    <uri>model://rover_gazebo/models/walker_racecourse</uri>
     <pose>-4 2 -.5 0 0 -1.57</pose>
     <name>walker_racecourse</name>
   </include>

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="world_name" default="racecar_walker" />
+  <arg name="world_name" default="willowgarage" />
   <arg name="gui" default="true" />
   <arg name="record" default="false" />
   <arg name="web_app" default="false" />

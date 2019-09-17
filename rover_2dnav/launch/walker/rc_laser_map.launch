@@ -72,11 +72,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Load a Map  -->
 <!--   <node name="map_server" pkg="map_server" type="map_server" args=" $(find rover_2dnav)/maps/walker.yaml" /> -->
 
-<!-- Load AMCL  -->
- <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch" >
-  </include>
-
   <group if="$(arg frontier)">
+
     <!-- Load Navigation Stack  -->
   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
     <param name="controller_frequency" value="10"/>
@@ -93,6 +90,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <!-- Run TEB local planner  -->
     <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" if="$(arg teb)" />
   </node>
+
+  <!-- Load AMCL  -->
+  <include file="$(find rover_2dnav)/launch/include/rc_amcl.launch" >
+  </include>
 
   <!-- Run Frontier Exploration -->
   <node pkg="explore_lite" type="explore" respawn="false" name="explore" output="screen">

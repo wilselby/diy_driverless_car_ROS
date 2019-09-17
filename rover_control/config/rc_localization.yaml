@@ -13,6 +13,7 @@ transform_time_offset: 0.1
 
 print_diagnostics: false
 
+
 odom0: /odometry/gps
 odom0_config: [true, true, false,
                false, false, false,
@@ -21,6 +22,7 @@ odom0_config: [true, true, false,
                false, false, false]
 odom0_differential: false
 odom0_queue_size: 10
+
 
 imu0: /os1_cloud_node/imu
 imu0_config: [false, false, false,

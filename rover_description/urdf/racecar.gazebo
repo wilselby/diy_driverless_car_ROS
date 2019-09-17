@@ -56,22 +56,6 @@
     </plugin>
   </gazebo>
 
-  <!-- IMU -->
-  <gazebo>
-    <plugin name="imu_controller" filename="libhector_gazebo_ros_imu.so">
-      <robotNamespace>/</robotNamespace>
-      <updateRate>200.0</updateRate> 
-      <bodyName>imu_link</bodyName>
-      <topicName>/os1_cloud_node/imu</topicName>
-      <accelDrift>0.005 0.005 0.005</accelDrift>
-      <accelGaussianNoise>0.005 0.005 0.005</accelGaussianNoise>
-      <rateDrift>0.005 0.005 0.005 </rateDrift>
-      <rateGaussianNoise>0.005 0.005 0.005 </rateGaussianNoise>
-      <headingDrift>0.005</headingDrift>
-      <headingGaussianNoise>0.005</headingGaussianNoise>
-    </plugin>
-  </gazebo>
-
   <!-- GPS -->
   <gazebo>
     <plugin name="gps_controller" filename="libhector_gazebo_ros_gps.so">
@@ -98,7 +82,7 @@
       <bodyName>base_link</bodyName>
       <topicName>ground_truth/odometry</topicName>
       <gaussianNoise>0.01</gaussianNoise>
-      <frameName>world</frameName>
+      <frameName>odom</frameName>
       <xyzOffsets>0 0 0</xyzOffsets>
       <rpyOffsets>0 0 0</rpyOffsets>
     </plugin>

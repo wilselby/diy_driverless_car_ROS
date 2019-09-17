@@ -66,7 +66,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Fake laser-->
   <include file="$(find rover_2dnav)/launch/include/pointcloud_to_laserscan_rc.launch"/>
 
-  <!-- Run Google Carographer to create 2-D Occupancy Grid Map-->
+  <!-- Run Hector Mapping to create 2-D Occupancy Grid Map-->
   <include file="$(find rover_2dnav)/launch/include/hector_mapping.launch"/>
 
   <!-- Load a Map  -->

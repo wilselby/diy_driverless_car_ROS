@@ -2,7 +2,7 @@
 <!--
 Software License Agreement (BSD)
 
-\file      rover_dbw_os1_wg.launch
+\file      rover_laser_map.launch
 \authors   Wil Selby <accounts@wilselby.com>
 \copyright Copyright (c) 2017, All rights reserved.
 
@@ -63,7 +63,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <!-- Load Keybaord/Joystick node  -->
   <include file="$(find rover_teleop)/launch/rover_teleop.launch">
-    <arg name="max_linear_vel" value="0.2" />
+    <arg name="max_linear_vel" value="0.5" />
   </include>
 
   <!-- Load Rover Control information -->
