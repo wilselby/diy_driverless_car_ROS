@@ -81,7 +81,7 @@ class cmd_vel_node(object):
         cv2.circle(self.debugImage, (20, throttle_center), radius, circleColor, thickness, lineType, shift=0)
 
 
-        steering_center = int(160 + (140 * (steering/1)))
+        steering_center = int(160 + (140 * (steering/1.6)))
         
         cv2.circle(self.debugImage, (steering_center, 160), radius, circleColor, thickness, lineType, shift=0)
 
