@@ -14,10 +14,9 @@ from sensor_msgs.msg import Image
 from sensor_msgs.msg import CompressedImage
 from cv_bridge import CvBridge, CvBridgeError
 
-class openmv_cam_client(object):
+class webcam_client(object):
     def __init__(self):
-        self.port_name = '/dev/openmvcam'
-        self.serial_port = None
+        self.cam = None
         self.img = None
         self.key = 0
         self.bridge = CvBridge()
@@ -25,25 +24,13 @@ class openmv_cam_client(object):
         #self.pub_comp = rospy.Publisher("/image_compressed", CompressedImage, queue_size = 10)
 
 
-    def initialize_serial(self):
+    def initialize(self):
 
-        self.serial_port = serial.Serial(self.port_name, baudrate=115200, bytesize=serial.EIGHTBITS, parity=serial.PARITY_NONE,
-                 xonxoff=False, rtscts=False, stopbits=serial.STOPBITS_ONE, timeout=None, dsrdtr=True)
-
+        self.cam = cv2.VideoCapture(0)
 
     def read_image(self):
 
-        # Read data from the serial buffer
-        self.serial_port.write("snap")
-        self.serial_port.flush()
-        size = struct.unpack('<L', self.serial_port.read(4))[0]
-        buf = self.serial_port.read(size)
-
-        # Use numpy to construct an array from the bytes
-        x = np.fromstring(buf, dtype='uint8')
-
-        # Decode the array into an image
-        self.img = cv2.imdecode(x, cv2.IMREAD_UNCHANGED)
+        ret_val, self.img = self.cam.read()
 
     def publish_image(self):
 
@@ -73,13 +60,13 @@ class openmv_cam_client(object):
 
     def run(self):
 
-        self.initialize_serial()
+        self.initialize()
 
         #pub = initialize_publishers()
 
         while not rospy.is_shutdown():
 
-            rate = rospy.Rate(10) # Run at 10Hz
+            rate = rospy.Rate(30) # Run at 10Hz
 
             #start_time = time.time()
             self.read_image()
@@ -96,9 +83,9 @@ class openmv_cam_client(object):
 
 def main(args):
 
-    rospy.init_node('openmv_cam', anonymous=True)
+    rospy.init_node('webcam', anonymous=True)
 
-    cam = openmv_cam_client()
+    cam = webcam_client()
 
     cam.run()
 
