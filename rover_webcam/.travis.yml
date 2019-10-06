@@ -1,0 +1,40 @@
+#   This .travis.yml works to check this repository
+# https://github.com/ros-industrial/industrial_core/blob/indigo-devel/.travis.yml
+#  Greatly inspired by JSK travis: https://github.com/jsk-ros-pkg/jsk_travis
+
+#sudo: required  # Not required by industrial_ci that uses Docker.
+#dist: trusty    # Not required by industrial_ci that uses Docker.
+services:
+  - docker
+# Force travis to use its minimal image with default Python settings
+language: generic
+notifications:
+  #  Whoever receives success and/or failure via email
+  email:
+    recipients:
+#      - accounts@wilselby.com  # Change this to yours should you copy this file.
+env:
+  global:
+    - NOT_TEST_BUILD='true'
+    - DEBUG_BASH='true'
+    - VERBOSE_OUTPUT='true'
+    - CATKIN_CONFIG=--no-install
+    - ROS_PARALLEL_TEST_JOBS='-j1'
+    - CATKIN_PARALLEL_TEST_JOBS='-p1'
+  matrix:
+#    - ROS_DISTRO="indigo" ROS_REPO=ros DOCKER_BASE_IMAGE=ros:indigo-ros-core
+    - ROS_DISTRO="kinetic" ROS_REPO=ros DOCKER_BASE_IMAGE=ros:kinetic-ros-core ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip ros-kinetic-rviz"
+#    - ROS_DISTRO="lunar" ROS_REPO=ros DOCKER_BASE_IMAGE=ros:lunar-ros-core
+#    - ROS_DISTRO="lunar" ROS_REPO=ros-shadow-fixed DOCKER_BASE_IMAGE=ros:lunar-ros-core
+    - ROS_DISTRO="melodic" ROS_REPO=ros DOCKER_BASE_IMAGE=ros:melodic-ros-core ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip ros-melodic-rviz"
+#matrix:
+#  allow_failures:
+#     - ROS_DISTRO="melodic" ROS_REPO=ros DOCKER_BASE_IMAGE=ros:melodic-ros-core ADDITIONAL_DEBS="build-essential python-catkin-tools python-pip ros-melodic-rviz"
+install:
+  - git clone https://github.com/ros-industrial/industrial_ci.git .ci_config
+script: 
+  - source .ci_config/travis.sh
+#  - source ./travis.sh  # Enable this when you have a package-local script 
+
+
+

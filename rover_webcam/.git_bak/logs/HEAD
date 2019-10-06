@@ -1,0 +1,11 @@
+0000000000000000000000000000000000000000 6bd715e96b1a763f9ec9d01d7fd2498057a8cea5 Wil Selby <accounts@wilselby.com> 1543097703 -0800	clone: from https://github.com/wilselby/openMV_cam.git
+6bd715e96b1a763f9ec9d01d7fd2498057a8cea5 cebb4b111c216950f89398f6e924b29db9381e75 Wil Selby <accounts@wilselby.com> 1543099127 -0800	commit: updated package name for repo
+cebb4b111c216950f89398f6e924b29db9381e75 609079b9ac0ba6441b206537ac9ffbae89175fca Wil Selby <accounts@wilselby.com> 1548623587 -0800	commit: use openmvcam sym link
+609079b9ac0ba6441b206537ac9ffbae89175fca 609079b9ac0ba6441b206537ac9ffbae89175fca Wil Selby <accounts@wilselby.com> 1548623671 -0800	checkout: moving from master to master
+609079b9ac0ba6441b206537ac9ffbae89175fca 609079b9ac0ba6441b206537ac9ffbae89175fca Wil Selby <accounts@wilselby.com> 1548623746 -0800	reset: moving to HEAD
+609079b9ac0ba6441b206537ac9ffbae89175fca 42d65db31832cec00977a158d6add140563cf4d7 Wil Selby <accounts@wilselby.com> 1548623751 -0800	pull: Merge made by the 'recursive' strategy.
+42d65db31832cec00977a158d6add140563cf4d7 42d65db31832cec00977a158d6add140563cf4d7 Wil Selby <accounts@wilselby.com> 1548623768 -0800	checkout: moving from master to master
+42d65db31832cec00977a158d6add140563cf4d7 42d65db31832cec00977a158d6add140563cf4d7 Wil Selby <accounts@wilselby.com> 1548623843 -0800	checkout: moving from master to master
+42d65db31832cec00977a158d6add140563cf4d7 42d65db31832cec00977a158d6add140563cf4d7 Wil Selby <accounts@wilselby.com> 1549073421 -0800	checkout: moving from master to master
+42d65db31832cec00977a158d6add140563cf4d7 a8bd18be7539151aca16e3d12f00adc1c314041c Wil Selby <accounts@wilselby.com> 1550637493 -0800	pull: Fast-forward
+a8bd18be7539151aca16e3d12f00adc1c314041c 2ba80af1e1441f346873269a8c24c5c2c030e2e0 Wil Selby <accounts@wilselby.com> 1550638753 -0800	commit: added udev rule
