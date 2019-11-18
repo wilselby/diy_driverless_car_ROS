@@ -33,7 +33,7 @@ class cmd_vel_node(object):
       self.cmdVelStamped_pub = rospy.Publisher('/platform_control/cmd_vel_stamped', TwistStamped, queue_size=10)
 
       """ Variables """
-      self.model_path = 'home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5'
+      self.model_path = 'home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model2.hdf5'
       self.cmdvel = Twist()
       self.baseVelocity = TwistStamped()
       self.input_cmd = TwistStamped()
@@ -131,7 +131,7 @@ class cmd_vel_node(object):
     def run(self):
         
          # check that model Keras version is same as local Keras version
-         f = h5py.File('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
+         f = h5py.File('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model_2.hdf5', mode='r')
          model_version = f.attrs.get('keras_version')
          keras_version_installed = None
          keras_version_installed = str(keras_version).encode('utf8')
@@ -144,7 +144,7 @@ class cmd_vel_node(object):
          with open('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
              model = model_from_json(f.read())
 
-         model = load_model('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5')
+         model = load_model('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model_2.hdf5')
          
          # Load weights into the new model
          print("Model loaded.")
@@ -161,7 +161,7 @@ class cmd_vel_node(object):
                  
                  # step 3: 
                  
-                 self.cmdvel.linear.x = 0.13
+                 self.cmdvel.linear.x = 0.11
                  self.angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
                  self.angle = -1.57 if self.angle < -1.57 else 1.57 if self.angle > 1.57 else self.angle
                  self.cmdvel.angular.z = self.angle
