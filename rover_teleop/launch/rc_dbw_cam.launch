@@ -60,7 +60,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     </node>   
 
     <!-- Spawn Camera Driver node --> 
-    <include file="$(find openMV_cam)/launch/openmv_cam.launch"/>
+    <include file="$(find rover_webcam)/launch/webcam.launch"/>
 
     <!-- Spawn OS1 ROS node -->
     <group if="$(arg os1)">

@@ -1,0 +1,6 @@
+# Ignore calibration images
+*.jpg
+*.png
+
+# Ignore swap files
+*.swp 
