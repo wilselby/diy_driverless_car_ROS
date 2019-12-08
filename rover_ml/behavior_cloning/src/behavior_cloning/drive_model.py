@@ -34,7 +34,7 @@ class cmd_vel_node(object):
       self.cmdVelStamped_pub = rospy.Publisher('/platform_control/cmd_vel_stamped', TwistStamped, queue_size=10)
 
       """ Variables """
-      self.model_path = 'home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model2.hdf5'
+      self.model_path = '/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5'
       self.cmdvel = Twist()
       self.baseVelocity = TwistStamped()
       self.input_cmd = TwistStamped()
@@ -132,7 +132,7 @@ class cmd_vel_node(object):
     def run(self):
         
          # check that model Keras version is same as local Keras version
-         f = h5py.File('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model_2.hdf5', mode='r')
+         f = h5py.File('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
          model_version = f.attrs.get('keras_version')
          keras_version_installed = None
          keras_version_installed = str(keras_version).encode('utf8')
@@ -142,10 +142,10 @@ class cmd_vel_node(object):
 
          # Model reconstruction from JSON file
 
-         with open('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
+         with open('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
              model = model_from_json(f.read())
 
-         model = load_model('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model_2.hdf5')
+         model = load_model('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5')
          
          # Load weights into the new model
          print("Model loaded.")
