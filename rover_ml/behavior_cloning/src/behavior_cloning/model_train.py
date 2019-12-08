@@ -56,8 +56,8 @@ def generator(samples, batch_size=32, aug):
                     #plt.show()
                     angle = float(batch_sample[6])
                     images.append(center_image)
+                    angles.append(angle)
                     if aug:
-                        angles.append(angle)
                         flip_image = np.fliplr(center_image)
                         flip_angle = -1 * angle
                         images.append(flip_image)
