@@ -24,7 +24,8 @@ class cmd_vel_node(object):
     def __init__(self):
             
       """ROS Subscriptions """
-      self.joy_sub = rospy.Subscriber("/joy_teleop/cmd_vel_stamped",TwistStamped,self.debug_img)
+      #self.joy_sub = rospy.Subscriber("/joy_teleop/cmd_vel_stamped",TwistStamped,self.debug_img)
+      self.cmd_sub = rospy.Subscriber("/rover_velocity_controller/cmd_vel",Twist,self.debug_img)
       self.debug_pub = rospy.Publisher("/image_converter/debug_video",Image, queue_size=10)
 
       self.image_sub = rospy.Subscriber("/openmv_cam/image/raw",Image,self.cvt_image)
@@ -47,8 +48,8 @@ class cmd_vel_node(object):
 
     def debug_img(self, cmd):
       self.input_cmd = cmd
-      throttle = self.input_cmd.twist.linear.x
-      steering =self.input_cmd.twist.angular.z
+      throttle = self.input_cmd.linear.x
+      steering =self.input_cmd.angular.z
 
       #print("CMD: {} {}").format(throttle,steering)
 
@@ -60,7 +61,7 @@ class cmd_vel_node(object):
 
         # Text settings
         font = cv2.FONT_HERSHEY_SIMPLEX
-        location = (10,20)
+        location = (50,50) #10,20
         fontScale = .5
         fontColor = (255,0,0)
         lineType = 2
@@ -78,12 +79,12 @@ class cmd_vel_node(object):
         circleColor = (0,0,255)
         thickness = -1
 
-        cv2.circle(self.debugImage, (20, throttle_center), radius, circleColor, thickness, lineType, shift=0)
+        #cv2.circle(self.debugImage, (20, throttle_center), radius, circleColor, thickness, lineType, shift=0)
 
 
         steering_center = int(160 + (140 * (steering/1.6)))
         
-        cv2.circle(self.debugImage, (steering_center, 160), radius, circleColor, thickness, lineType, shift=0)
+        #cv2.circle(self.debugImage, (steering_center, 160), radius, circleColor, thickness, lineType, shift=0)
 
 
         # Publish debug image

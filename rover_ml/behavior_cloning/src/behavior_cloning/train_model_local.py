@@ -16,6 +16,8 @@ from keras.layers.convolutional import Convolution2D
 from keras.layers.core import Flatten, Dense, Dropout, SpatialDropout2D
 from keras.optimizers import Adam
 from keras.callbacks import ModelCheckpoint
+from keras.callbacks import EarlyStopping
+
 import sklearn
 from sklearn.model_selection import train_test_split
 
@@ -74,10 +76,10 @@ def generator(samples, batch_size=32, aug=0):
 
 # compile and train the model using the generator function
 batch_size_value = 32
-n_epoch = 5
+n_epoch = 30
 
-train_generator = generator(train_samples, batch_size=batch_size_value, 1)
-validation_generator = generator(validation_samples, batch_size=batch_size_value, 0)
+train_generator = generator(train_samples, batch_size=batch_size_value, aug=1)
+validation_generator = generator(validation_samples, batch_size=batch_size_value, aug=0)
 
 model = Sequential()
 
@@ -85,7 +87,7 @@ model = Sequential()
 model.add(Cropping2D(cropping=((75,20), (0,0)), input_shape=(180,320,3)))
 
 # Preprocess incoming data, centered around zero with small standard deviation
-model.add(Lambda(lambda x: (x / 255.0) - 0.5))
+#model.add(Lambda(lambda x: (x / 255.0) - 0.5))
 
 #Nvidia model
 model.add(Convolution2D(24, (5, 5), activation="relu", name="conv_1", strides=(2, 2)))
@@ -114,7 +116,10 @@ model.summary()
 # checkpoint
 filepath="../../weights/weights-improvement-{epoch:02d}-{val_loss:.2f}.hdf5"
 checkpoint = ModelCheckpoint(filepath, monitor='val_loss', verbose=1, save_best_only=True, mode='auto', period=1)
-callbacks_list = [checkpoint]
+
+early_stop = EarlyStopping(monitor='val_loss', patience=10)
+
+callbacks_list = [checkpoint, early_stop]
 
 # Fit the model
 history_object = model.fit_generator(train_generator, steps_per_epoch=(len(train_samples) / batch_size_value), validation_data=validation_generator, validation_steps=(len(validation_samples)/batch_size_value), callbacks=callbacks_list, epochs=n_epoch)
