@@ -24,20 +24,72 @@ class cmd_vel_node(object):
     def __init__(self):
             
       """ROS Subscriptions """
+      #self.joy_sub = rospy.Subscriber("/joy_teleop/cmd_vel_stamped",TwistStamped,self.debug_img)
+      self.cmd_sub = rospy.Subscriber("/rover_velocity_controller/cmd_vel", Twist, self.debug_img)
+      self.debug_pub = rospy.Publisher("/image_converter/debug_video",Image, queue_size=10)
+
       self.image_sub = rospy.Subscriber("/openmv_cam/image/raw",Image,self.cvt_image)
       self.image_pub = rospy.Publisher("/image_converter/output_video",Image, queue_size=10)
       self.cmdVel_pub = rospy.Publisher("/platform_control/cmd_vel", Twist, queue_size=10)
       self.cmdVelStamped_pub = rospy.Publisher('/platform_control/cmd_vel_stamped', TwistStamped, queue_size=10)
 
       """ Variables """
-      self.model_path = 'home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5'
+      self.model_path = '/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5'
       self.cmdvel = Twist()
       self.baseVelocity = TwistStamped()
+      self.input_cmd = TwistStamped()
       self.bridge = CvBridge()
       self.latestImage = None
       self.outputImage = None
       self.resized_image = None
+      self.debugImage = None
       self.imgRcvd = False
+
+
+    def debug_img(self, cmd):
+      self.input_cmd = cmd
+      throttle = self.input_cmd.linear.x
+      steering =self.input_cmd.angular.z
+
+      #print("CMD: {} {}").format(throttle,steering)
+
+      if self.imgRcvd:
+
+        # Get latest image
+        self.debugImage = cv2.resize(self.latestImage, (320,180)) 
+        height, width, channels = self.debugImage.shape
+
+        # Text settings
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        location = (10,20)
+        fontScale = .5
+        fontColor = (255,0,0)
+        lineType = 2
+        throttle_str = "Throttle: " + "{0:.2f}".format(throttle)
+        steering_str = "Steering: " + "{0:.2f}".format(steering)
+
+        # Print text
+        cv2.putText(self.debugImage, throttle_str, location, font, fontScale, fontColor, lineType)
+        cv2.putText(self.debugImage, steering_str, (10,35), font, fontScale, fontColor, lineType)
+
+        # Draw markers
+        throttle_center = int(50 + (120 - (120*(throttle/.15))))
+        
+        radius = 3
+        circleColor = (0,0,255)
+        thickness = -1
+
+        cv2.circle(self.debugImage, (20, throttle_center), radius, circleColor, thickness, lineType, shift=0)
+
+
+        steering_center = int(160 + (140 * (steering/1.6)))
+        
+        cv2.circle(self.debugImage, (steering_center, 160), radius, circleColor, thickness, lineType, shift=0)
+
+
+        # Publish debug image
+        self.publish(self.debugImage, self.bridge,  self.debug_pub)
+
 
 
     def cvt_image(self,data):  
@@ -80,7 +132,7 @@ class cmd_vel_node(object):
     def run(self):
         
          # check that model Keras version is same as local Keras version
-         f = h5py.File('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
+         f = h5py.File('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5', mode='r')
          model_version = f.attrs.get('keras_version')
          keras_version_installed = None
          keras_version_installed = str(keras_version).encode('utf8')
@@ -90,10 +142,10 @@ class cmd_vel_node(object):
 
          # Model reconstruction from JSON file
 
-         with open('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
+         with open('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.json', 'r') as f:
              model = model_from_json(f.read())
 
-         model = load_model('/home/ouster/src/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5')
+         model = load_model('/home/wil/catkin_ws/src/diy_driverless_car_ROS/rover_ml/behavior_cloning/src/behavior_cloning/model.h5')
          
          # Load weights into the new model
          print("Model loaded.")
@@ -110,7 +162,7 @@ class cmd_vel_node(object):
                  
                  # step 3: 
                  
-                 self.cmdvel.linear.x = 0.13
+                 self.cmdvel.linear.x = 0.5 #.13
                  self.angle = float(model.predict(image_array[None, :, :, :], batch_size=1))
                  self.angle = -1.57 if self.angle < -1.57 else 1.57 if self.angle > 1.57 else self.angle
                  self.cmdvel.angular.z = self.angle

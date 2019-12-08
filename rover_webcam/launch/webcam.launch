@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Arguments -->
+  <arg name="rviz" default="false" doc="whether to run RVIZ"/>
+
+  <!-- Load the Open MV Camera node -->
+  <node respawn="true" pkg ="rover_webcam" type="webcam_node.py" name="webcam_node" />
+
+  <!-- Load RVIZ -->
+  <node if="$(arg rviz)" name="rviz" pkg="rviz" type="rviz" args="-d $(find rover_webcam)/webcam_rviz.rviz" />
+
+</launch>
+
+
+
