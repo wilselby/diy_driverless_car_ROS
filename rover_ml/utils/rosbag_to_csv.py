@@ -54,7 +54,7 @@ def write_image(bridge, outdir, msg, fmt='png'):
     
 #sensor_msgs/Image
 def camera2dict(msg, write_results, camera_dict):
-    camera_dict["timestamp"].append(msg.header.stamp.to_nsec()-100000000)
+    camera_dict["timestamp"].append(msg.header.stamp.to_nsec())
     camera_dict["width"].append(write_results['width'] if 'width' in write_results else msg.width)
     camera_dict['height'].append(write_results['height'] if 'height' in write_results else msg.height)
     camera_dict["frame_id"].append(msg.header.frame_id)
