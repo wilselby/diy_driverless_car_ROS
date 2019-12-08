@@ -33,7 +33,7 @@ print("Number of validation samples: ", len(validation_samples))
 
 
 #index,timestamp,width,height,frame_id,filename,angle,speed
-def generator(samples, batch_size=32):
+def generator(samples, batch_size=32, aug):
     num_samples = len(samples)
 
     while 1:  # Loop forever so the generator never terminates
@@ -56,11 +56,12 @@ def generator(samples, batch_size=32):
                     #plt.show()
                     angle = float(batch_sample[6])
                     images.append(center_image)
-                    angles.append(angle)
-                    flip_image = np.fliplr(center_image)
-                    flip_angle = -1 * angle
-                    images.append(flip_image)
-                    angles.append(flip_angle)
+                    if aug:
+                        angles.append(angle)
+                        flip_image = np.fliplr(center_image)
+                        flip_angle = -1 * angle
+                        images.append(flip_image)
+                        angles.append(flip_angle)
 
             X_train = np.array(images)
             y_train = np.array(angles)
@@ -72,9 +73,9 @@ def generator(samples, batch_size=32):
 batch_size_value = 32
 n_epoch = 30
 
-train_generator = generator(train_samples, batch_size=batch_size_value)
+train_generator = generator(train_samples, batch_size=batch_size_value, 1)
 validation_generator = generator(
-    validation_samples, batch_size=batch_size_value)
+    validation_samples, batch_size=batch_size_value, 0)
 
 model = Sequential()
 
