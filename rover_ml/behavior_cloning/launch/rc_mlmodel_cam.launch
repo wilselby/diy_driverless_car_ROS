@@ -26,9 +26,12 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
 <launch>
   <arg name="record" default="false" />
-  <arg name="web_app" default="true" />
+  <arg name="web_app" default="false" />
   <arg name="rviz" default="false" />
   <arg name="replay" default="false" />
+  <arg name="os1" default="false" />
+  <arg name="lidar_mode" default="1024x20" />
+  <arg name="os1_image" default="true" />
 
   <!-- Set time parameter if replaying data -->
   <param name="/use_sim_time" value="true" if="$(arg replay)" />
@@ -37,8 +40,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
    <include file="$(find rover_teleop)/launch/rc_dbw_cam.launch">
      <arg name="replay" value="$(arg replay)" />
      <arg name="web_app" value="$(arg web_app)" />
-     <arg name="ekf" value="true" />
+     <arg name="ekf" value="false" />
      <arg name="rviz" value="$(arg rviz)" />
+     <arg name="os1" value="$(arg os1)" /> 
+     <arg name="lidar_mode" value="$(arg lidar_mode)" />
+     <arg name="os1_image" value="$(arg os1_image)" />
    </include> 
 
   <!-- Run Lane Detection Node -->
