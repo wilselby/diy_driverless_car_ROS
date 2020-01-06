@@ -26,7 +26,8 @@ MIN_PER_NANOSEC = 6e10
 
 LEFT_CAMERA_TOPIC = "/left_camera/image_color"
 # CENTER_CAMERA_TOPIC = "/cam/camera_/image_raw"
-CENTER_CAMERA_TOPIC = "/openmv_cam/image/raw"
+CENTER_CAMERA_TOPIC = "/img_node/intensity_image"
+#CENTER_CAMERA_TOPIC = "/openmv_cam/image/raw"
 RIGHT_CAMERA_TOPIC = "/right_camera/image_color"
 LEFT_CAMERA_COMPRESSED_TOPIC = LEFT_CAMERA_TOPIC + "/compressed"
 CENTER_CAMERA_COMPRESSED_TOPIC = CENTER_CAMERA_TOPIC + "/compressed"
